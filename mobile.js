@@ -2,7 +2,7 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const nav=document.createElement('nav');nav.className='mobile-nav';nav.setAttribute('aria-label','Разделы приложения');
-nav.innerHTML=[['today','◉','Сегодня'],['charts','▥','Графики'],['water','≈','Вода'],['reports','≋','Отчёты']].map(([id,ico,label])=>'<button type="button" data-tab="'+id+'" aria-label="'+label+'"><span class="navicon">'+ico+'</span>'+label+'</button>').join('');
+nav.innerHTML=[['today','◉','Сегодня'],['charts','▥','Графики'],['map','⌖','Карта'],['water','≈','Вода'],['reports','≋','Отчёты']].map(([id,ico,label])=>'<button type="button" data-tab="'+id+'" aria-label="'+label+'"><span class="navicon">'+ico+'</span>'+label+'</button>').join('');
 document.body.append(nav);
 const dock=document.createElement('aside');dock.id='weatherDock';dock.className='weather-dock';dock.setAttribute('aria-label','Погодные показатели · быстрый переход к графикам');
 dock.innerHTML=[
@@ -48,9 +48,17 @@ waterPage.innerHTML='<h2 class="m-title">Селигер · вода</h2><div cla
 const trendCard=document.createElement('div');trendCard.className='m-box';trendCard.innerHTML='<h3>Изменение уровня воды</h3><div id="waterTrend" class="source-note">Загружаем историю измерений…</div>';waterPage.append(trendCard);
 waterPage.insertAdjacentHTML('beforeend','<div class="m-box"><h3>Факторы для прогноза клёва</h3><div class="factor-grid"><div><b>Уровень и динамика</b><p>Гидропост Осташков / Канал имени Москвы. Важно изменение, а не только отметка.</p></div><div><b>Температура воды</b><p>Датированные измерения гидропоста. Пока нет свежих данных — не включаем в индекс.</p></div><div><b>Ветер и порывы</b><p>Open-Meteo; особенно важны направление ветра и разгон волны на открытых плёсах.</p></div><div><b>Давление и его изменение</b><p>Open-Meteo, почасовой прогноз. Второстепенный фактор, связь с поклёвками неоднозначна.</p></div><div><b>Свет и погода</b><p>Восход, закат, осадки — Open-Meteo. Заметны при выборе утреннего и вечернего окна.</p></div><div><b>Кормовая рыба и рельеф</b><p>Эхолот на лодке и датированные сообщения Русфишинга. По API эти данные не получить.</p></div></div><p class="source-note">Текущий индекс клёва экспериментальный и использует только погоду и время суток. Температуру и уровень воды он пока не учитывает: для этого нужны свежие измерения и проверенная модель.</p></div>');
 grid.after(waterPage);
+const mapPage=document.createElement('section');mapPage.className='mobile-page map-page';mapPage.id='mapPage';mapPage.dataset.view='map';
+mapPage.innerHTML='<div class="map-title-line"><h2 class="m-title">Карта Селигера</h2><span id="mapCount" class="source-note">Загружаем точки…</span></div>'+
+'<div class="map-toolbar"><label>Рыба <select id="mapFilter" aria-label="Фильтр по виду рыбы"><option value="all">Все</option><option value="щук">Щука</option><option value="судак">Судак</option><option value="окун">Окунь</option><option value="плотв">Плотва</option></select></label><button type="button" id="mapGps">⌖ Мой GPS</button></div>'+
+'<div id="seligerMap" role="region" aria-label="Интерактивная карта Селигера"></div><p class="source-note" id="mapStatus">Загружаем подложку OpenStreetMap…</p>'+
+'<div class="m-box depth-box"><h3>Глубины Селигера</h3><p>Встроенный слой пока недоступен: не найден проверенный набор координат глубин с разрешением на встраивание. Никаких условных изобат или придуманных глубин на карте нет.</p><p><a href="https://etomesto.com/map-tver_seliger-glubiny/" target="_blank" rel="noopener noreferrer">Открыть историческую карту глубин (составлена по материалам 1970-х — 2001 года) ↗</a></p><p class="source-note">Исторические глубины и русла могли измениться. Не использовать вместо навигационной карты и эхолота.</p></div>'+
+'<div class="map-title-line"><h3>Отчёты с привязкой к району</h3></div><p class="source-note">Метки — ориентиры, а не места поимки. Полупрозрачный круг показывает неопределённость местоположения.</p><div id="mapReports"></div><p class="source-note" id="unlocatedReports"></p>';
+grid.after(mapPage);
+
 
 let previousTab=null;
-const tabOrder=['today','charts','water','reports'];
+const tabOrder=['today','charts','map','water','reports'];
 function tab(id){
  const entering=previousTab!==null&&previousTab!==id;
  const direction=tabOrder.indexOf(id)>=tabOrder.indexOf(previousTab)?'forward':'backward';
@@ -60,15 +68,16 @@ function tab(id){
   el.classList.remove('view-enter-forward','view-enter-backward');
   if(visible&&entering){void el.offsetWidth;el.classList.add('view-enter-'+direction);}
  }
- for(const x of [reports,waterPage])x.classList.toggle('active',x.dataset.view===id);
+ for(const x of [reports,waterPage,mapPage])x.classList.toggle('active',x.dataset.view===id);
  nav.querySelectorAll('button').forEach(b=>{const on=b.dataset.tab===id;b.classList.toggle('active',on);b.setAttribute('aria-current',on?'page':'false')});
  previousTab=id;
  try{window.history.replaceState(null,'','#'+id)}catch(e){}
  window.scrollTo({top:0,behavior:'instant'});
  if(id==='charts')requestAnimationFrame(()=>{if(typeof charts!=='undefined')Object.values(charts).forEach(c=>c?.resize?.())});
+ window.dispatchEvent(new CustomEvent('seliger:tab',{detail:{id}}));
 }
 nav.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>tab(b.dataset.tab)));
-tab(['today','charts','water','reports'].includes(location.hash.slice(1))?location.hash.slice(1):'today');
+tab(['today','charts','map','water','reports'].includes(location.hash.slice(1))?location.hash.slice(1):'today');
 const escape=s=>String(s??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
 const reportEscape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 async function loadReports(){
