@@ -18,7 +18,7 @@ vm.runInNewContext(fs.readFileSync('chart-core.js','utf8'),env,{filename:'chart-
 function draw(values,type='line'){
  text.length=0;bars.length=0;
  const chart=new env.window.Chart(canvas,{type,data:{labels:['a','b','c'],datasets:[{label:'Test',data:values,borderColor:'#777'}]},options:{}});
- const ticks=text.filter(t=>/^-?\\d+(?:\\.\\d+)?$/.test(t)).map(Number);
+ const ticks=text.filter(t=>/^-?\d+(?:\.\d+)?$/.test(t)).map(Number);
  chart.destroy();
  return {ticks,bars:bars.length,allText:text.slice()};
 }
