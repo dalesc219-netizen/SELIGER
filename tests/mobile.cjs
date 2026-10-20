@@ -92,6 +92,16 @@ const assert = require('node:assert/strict');
    assert.equal(await page.locator('.weather-dock .dock-item').count(),4,'Persistent dock icons');
    const dockRect=await page.locator('#weatherDock').boundingBox();
    assert.ok(dockRect&&dockRect.y>=18,'Dynamic Island top clearance');
+   // An archived forecast must never show the old snapshot's current=99°C as live weather.
+   const stale=await page.evaluate(()=>{
+     const oldest=new Date(Date.now()-15*3600000).toISOString();
+     const currentForecast=hourly;
+     applyData({hourly:currentForecast,current:{time:'2020-01-01T00:00',temperature_2m:99,apparent_temperature:99,wind_speed_10m:99,wind_gusts_10m:99,pressure_msl:999},saved_at:oldest},'cache');
+     return {status:document.getElementById('status').textContent,temp:document.getElementById('temp').textContent,safety:document.getElementById('safety').textContent};
+   });
+   assert.ok(stale.status.includes('Устаревший прогноз'),'Stale saved forecast clearly labeled');
+   assert.ok(!stale.temp.includes('99'),'Archived current temperature is not presented as current');
+   assert.ok(stale.safety.includes('слишком старый'),'Stale forecast cannot imply safe boating conditions');
    await page.route('https://api.open-meteo.com/**',route=>route.abort('failed'));
    await page.reload({waitUntil:'domcontentloaded'});
    await page.waitForFunction(()=>/прогноз/i.test(document.getElementById('status').textContent),{timeout:16000});
