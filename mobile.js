@@ -32,7 +32,7 @@ const controls=main.querySelector('.controls'),metrics=main.querySelector('.metr
 const weather=document.createElement('div');weather.className='weather-strip';weather.id='daystrip';weather.setAttribute('aria-label','Ближайшие три дня');
 metrics.after(weather);
 const tripHeading=document.createElement('div');tripHeading.className='trip-heading';
-tripHeading.innerHTML='<strong>Поездка · 22–25 октября</strong><span id="tripSource">Загружаем прогноз…</span>';
+tripHeading.innerHTML='<strong>Поездка · 22–25 октября</strong><span id="tripSource">Загружаем прогноз…</span><small class="trip-base-note">Старт: база «Ладья» · Бараново, 18 · свой причал</small>';
 metrics.after(tripHeading);
 
 const analytical=main.querySelector('.species'),sectionTitle=main.querySelector('.section'),safety=main.querySelector('#safety'),foot=main.querySelector('.foot');
