@@ -58,6 +58,17 @@ const assert = require('node:assert/strict');
    await page.locator('#reportsPage').waitFor({state:'visible'});
    
    assert.ok(await page.locator('a[href*="rusfishing.ru"]').count()>0);
+   assert.equal(await page.locator('.weather-dock .dock-item').count(),4,'Persistent dock icons');
+   const dockRect=await page.locator('#weatherDock').boundingBox();
+   assert.ok(dockRect&&dockRect.y>=18,'Dynamic Island top clearance');
+   await page.route('https://api.open-meteo.com/**',route=>route.abort('failed'));
+   await page.reload({waitUntil:'domcontentloaded'});
+   await page.waitForFunction(()=>document.getElementById('status').textContent.includes('Сохранённый прогноз'),{timeout:16000});
+   await page.waitForFunction(()=>document.querySelector('#weatherDock .dock-value').textContent.includes('°'),{timeout:5000});
+   await page.locator('#weatherDock button[data-chart="tempChart"]').click();
+   await page.locator('#tempChart').waitFor({state:'visible'});
+   await page.waitForFunction(()=>{const c=document.getElementById('tempChart');return c.width>150&&c.getContext('2d').getImageData(0,0,c.width,c.height).data.some(x=>x>0)},{timeout:7000});
+
    assert.deepEqual(errors.filter(x=>!/Chart is not defined|Failed to fetch/i.test(x)),[],scenario.name+' JavaScript errors');
    console.log('PASS',scenario.name);
    await page.close();
