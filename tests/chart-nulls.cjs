@@ -20,7 +20,7 @@ function draw(values,type='line'){
  const chart=new env.window.Chart(canvas,{type,data:{labels:['a','b','c'],datasets:[{label:'Test',data:values,borderColor:'#777'}]},options:{}});
  const ticks=text.filter(t=>/^-?\d+(?:\.\d+)?$/.test(t)).map(Number);
  chart.destroy();
- return {ticks,bars:bars.length,allText:text.slice()};
+ return {ticks,bars:bars.filter(x=>x[1]>25).length,allText:text.slice()};
 }
 const line=draw([null,8,10]);
 assert.ok(line.ticks.length>=4,'numeric axis labels rendered');
