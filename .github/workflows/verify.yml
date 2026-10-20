@@ -23,7 +23,11 @@ jobs:
           node --check mobile.js
           node --check map.js
           node --check sw.js
+          node --check chart-core.js
+          node --check tests/chart-nulls.cjs
       - name: Python syntax
         run: python -c "import ast,pathlib; ast.parse(pathlib.Path('update_history.py').read_text()); ast.parse(pathlib.Path('update_water.py').read_text())"
+      - name: Null-data chart regression
+        run: node tests/chart-nulls.cjs
       - name: Structure smoke tests
         run: node tests/smoke.mjs
