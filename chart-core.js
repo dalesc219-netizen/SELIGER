@@ -21,7 +21,7 @@ class SeligerChart {
   if(this.destroyed||!this.w)return;
   const c=this.ctx,w=this.w,h=this.h;const labels=this.config.data.labels||[],series=this.config.data.datasets||[];
   const left=w<430?39:48,right=13,top=33,bottom=32;const pw=w-left-right,ph=h-top-bottom;
-  c.clearRect(0,0,w,h);c.font='11px system-ui,sans-serif';
+  c.clearRect(0,0,w,h);const boat=typeof document!=='undefined'&&document.body?.classList.contains('boat-mode');c.font=(boat?'13px':'12px')+' system-ui,sans-serif';
   const numbers=series.flatMap(s=>(s.data||[]).filter(v=>v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v))).map(Number));if(!numbers.length){c.fillStyle=styles.axis;c.textAlign='center';c.fillText('Нет данных за выбранный период',w/2,h/2);return;}
   let lo=Math.min(...numbers),hi=Math.max(...numbers);if(hi===lo){hi+=1;lo-=1}const pad=(hi-lo)*.12;lo-=pad;hi+=pad;
   if(this.config.type==='bar')lo=Math.min(0,lo);
@@ -43,11 +43,11 @@ class SeligerChart {
    if(this.config.type==='bar'){const bar=Math.max(2,Math.min(24,pw/Math.max(1,labels.length)*.65));for(let i=0;i<values.length;i++){const raw=values[i];if(raw===null||raw===undefined||raw===''||!Number.isFinite(Number(raw)))continue;const v=Number(raw);const y=Y(v),base=Y(0);c.fillRect(X(i)-bar/2,Math.min(y,base),bar,Math.max(1,Math.abs(base-y)));}}
    else{c.beginPath();let started=false;for(let i=0;i<values.length;i++){const v=values[i];if(v===null||v===undefined||v===''||!Number.isFinite(Number(v))){started=false;continue;}const x=X(i),y=Y(Number(v));if(!started){c.moveTo(x,y);started=true;}else c.lineTo(x,y);}c.stroke();}
   });
-  let legendX=left;series.forEach(s=>{const name=String(s.label||'');c.font='11px system-ui,sans-serif';const tw=c.measureText(name).width;if(legendX+tw+26>w){return;}c.fillStyle=s.borderColor||s.backgroundColor||'#79deb9';c.fillRect(legendX,9,9,9);c.fillStyle=styles.text;c.textAlign='left';c.fillText(name,legendX+14,18);legendX+=tw+30;});
+  let legendX=left;series.forEach(s=>{const name=String(s.label||'');c.font=(boat?'13px':'12px')+' system-ui,sans-serif';const tw=c.measureText(name).width;if(legendX+tw+26>w){return;}c.fillStyle=s.borderColor||s.backgroundColor||'#79deb9';c.fillRect(legendX,9,9,9);c.fillStyle=styles.text;c.textAlign='left';c.fillText(name,legendX+14,18);legendX+=tw+30;});
   if(this.touchX!==null){const idx=Math.max(0,Math.min(labels.length-1,Math.round((this.touchX-left)/pw*(labels.length-1))));const x=X(idx);c.setLineDash([3,3]);c.strokeStyle='#dcebf2';c.beginPath();c.moveTo(x,top);c.lineTo(x,top+ph);c.stroke();c.setLineDash([]);
    const lines=[String(labels[idx]),...series.map(s=>String(s.label||'')+': '+(s.data[idx]===null||s.data[idx]===undefined?'—':Number(s.data[idx]).toFixed(1)))];
-   const tipW=Math.min(w-12,Math.max(...lines.map(t=>c.measureText(t).width))+22),tipH=lines.length*17+12,tx=Math.min(w-tipW-5,Math.max(5,x+8)),ty=top+5;
-   c.fillStyle='#213846';c.fillRect(tx,ty,tipW,tipH);c.fillStyle='#f0f7f8';c.textAlign='left';lines.forEach((t,j)=>c.fillText(t,tx+10,ty+18+j*17));
+   c.font=(boat?'14px':'13px')+' system-ui,sans-serif';const tipStep=boat?21:19;const tipW=Math.min(w-12,Math.max(...lines.map(t=>c.measureText(t).width))+22),tipH=lines.length*tipStep+12,tx=Math.min(w-tipW-5,Math.max(5,x+8)),ty=top+5;
+   c.fillStyle='#213846';c.fillRect(tx,ty,tipW,tipH);c.fillStyle='#f0f7f8';c.textAlign='left';lines.forEach((t,j)=>c.fillText(t,tx+10,ty+18+j*tipStep));
   }
  }
 }
