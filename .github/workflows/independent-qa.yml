@@ -1,0 +1,56 @@
+name: Independent mobile QA agents
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tests/live-audit.cjs'
+      - '.github/workflows/independent-qa.yml'
+      - 'index.html'
+      - 'mobile.js'
+      - 'mobile.css'
+      - 'app.js'
+      - 'favicon.svg'
+permissions:
+  contents: read
+jobs:
+  agent_chromium:
+    name: Agent 1 - Weather and navigation
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      AUDIT_ENGINE: chromium
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save playwright@1.56.1
+      - run: npx playwright install --with-deps chromium
+      - run: node tests/live-audit.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: seliger-agent-1-chromium
+          path: audit-artifacts/
+          retention-days: 10
+  agent_webkit:
+    name: Agent 2 - iPhone Safari UX
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      AUDIT_ENGINE: webkit
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save playwright@1.56.1
+      - run: npx playwright install --with-deps webkit
+      - run: node tests/live-audit.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: seliger-agent-2-webkit
+          path: audit-artifacts/
+          retention-days: 10
