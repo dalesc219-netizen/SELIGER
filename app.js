@@ -13,7 +13,7 @@ function make(id,labels,sets,unit='',type='line'){
  const now=nowMoscowHour(),indexes=indices();
  chartOpts.nowIndex=indexes.findIndex(i=>hourly?.time?.[i]>=now);
  chartOpts.nowMarker=chartOpts.nowIndex>=0&&chartOpts.nowIndex<labels.length;
- chartOpts.markPast=period==='6h'&&chartOpts.nowIndex>0;
+ chartOpts.markPast=false;
  charts[id]=new Chart($(id),{type,data:{labels,datasets:sets},options:chartOpts});
 }
 function nowMoscowHour(){const fmt=new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',hourCycle:'h23'});const p=Object.fromEntries(fmt.formatToParts(new Date()).map(x=>[x.type,x.value]));return p.year+'-'+p.month+'-'+p.day+'T'+p.hour+':00';}
@@ -22,7 +22,7 @@ function indices(){
  const now=nowMoscowHour(),t=hourly.time;
  let center=t.findIndex(x=>x>=now);if(center<0)center=t.length-1;
  let first,last;
- if(period==='6h'){first=center-3;last=center+3;}
+ if(period==='6h'){first=center;last=center+6;}
  else {first=center;last=center+(period==='24h'?23:period==='3d'?71:167);}
  first=Math.max(0,first);last=Math.min(t.length-1,last);
  return Array.from({length:Math.max(0,last-first+1)},(_,i)=>first+i);
@@ -90,7 +90,7 @@ async function load(){
  })().finally(()=>loadingPromise=null);
  return loadingPromise;
 }
-const periodLabels={'6h':'±3 часа','24h':'24 часа','3d':'3 дня','7d':'7 дней'};
+const periodLabels={'6h':'6 часов','24h':'24 часа','3d':'3 дня','7d':'7 дней'};
 document.querySelectorAll('[data-period]').forEach(b=>b.addEventListener('click',()=>{
  period=b.dataset.period;
  document.querySelectorAll('[data-period]').forEach(x=>{const on=x===b;x.classList.toggle('active',on);x.setAttribute('aria-pressed',String(on));});
