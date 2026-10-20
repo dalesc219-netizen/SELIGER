@@ -61,6 +61,31 @@ root.querySelector('#mapGps').addEventListener('click',()=>{
  },e=>{button.disabled=false;status.textContent='GPS не получен: '+e.message},{enableHighAccuracy:true,timeout:12000,maximumAge:60000});
 });
 window.addEventListener('seliger:tab',e=>{if(e.detail?.id==='map')initMap();else if(map&&e.detail?.id==='charts')setTimeout(()=>map.invalidateSize(),150)});
+/* Research zones are intentionally separate from geographic report pins. */
+let researchAreas=[];
+const researchList=root.querySelector('#researchAreaCards'),researchCount=root.querySelector('#researchCount');
+const fishGroup={мирная:['плотва','подлещик','лещ','густера','язь','линь']};
+function researchFiltered(r){
+ const fish=root.querySelector('#researchSpecies').value,season=root.querySelector('#researchSeason').value;
+ const matchFish=fish==='all'||(fish==='мирная'?r.species.some(x=>fishGroup.мирная.includes(x)):r.species.includes(fish));
+ const matchSeason=season==='all'||(season==='october'?r.october_evidence_count>0:r.is_confirmed_october_catch===true);
+ return matchFish&&matchSeason;
+}
+function researchDraw(){
+ const rows=researchAreas.filter(researchFiltered);researchList.replaceChildren();
+ researchCount.textContent=rows.length+' из '+researchAreas.length+' районов';
+ if(!rows.length){researchList.textContent='Подтверждённых районов с такими условиями нет.';return}
+ for(const r of rows){
+  const article=document.createElement('article');article.className='research-area-card';
+  const dates=r.october_evidence_count>0?'Октябрьские записи: '+r.october_evidence_count:'Октябрьские уловы не подтверждены';
+  const depth=r.depth_range_m?.length===2?'Из отдельных отчётов: '+r.depth_range_m.join('–')+' м':'Подтверждённых глубин нет';
+  const links=(r.source_urls||[]).slice(0,6).map((u,i)=>'<a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">Источник '+(i+1)+' ↗</a>').join(' ');
+  article.innerHTML='<div class="report-head"><strong>'+esc(r.name)+'</strong><span class="research-accuracy">класс '+esc(r.location_accuracy)+'</span></div><p class="research-evidence">'+esc(dates)+' · авторских источников: '+Number(r.independent_sources_count||0)+'</p><p>Рыба: '+r.species.map(esc).join(', ')+'</p><p>'+esc(depth)+'</p><p>'+esc(r.evidence_summary)+'</p><p class="research-negative"><b>Ограничения:</b> '+esc(r.negative_reports||r.limitations)+'</p><div class="research-links">'+links+'</div><p class="source-note">Точка поимки не установлена — GPS не публикуем.</p>';
+  researchList.append(article);
+ }
+}
+for(const id of ['researchSpecies','researchSeason'])root.querySelector('#'+id).addEventListener('change',researchDraw);
+(async()=>{try{const r=await fetch('data/research_areas.json?v='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const d=await r.json();researchAreas=(d.areas||[]).filter(x=>x&&x.latitude===null&&x.longitude===null&&Array.isArray(x.species));researchDraw()}catch(e){researchCount.textContent='Данные недоступны';researchList.textContent='Не удалось загрузить исследовательские районы.'}})();
 (async()=>{try{
  const response=await fetch('data/forum_scan_state.json?ts='+Date.now(),{cache:'no-store'});
  if(!response.ok)return;const d=await response.json();
