@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'update_history.py'
+      - 'update_water.py'
       - '.github/workflows/weather.yml'
   schedule:
     - cron: '15 3,9,15,21 * * *'
@@ -19,9 +20,11 @@ jobs:
         with:
           python-version: '3.12'
       - run: python update_history.py
+      - name: Update Ostashkov water gauge
+        run: python update_water.py
       - name: Commit snapshot
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/history.json data/latest.json
+          git add data/history.json data/latest.json data/water.json
           git diff --cached --quiet || (git commit -m "data: snapshot forecast" && git push)
