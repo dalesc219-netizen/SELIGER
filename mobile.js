@@ -10,8 +10,8 @@ const weather=document.createElement('div');weather.className='weather-strip';we
 metrics.after(weather);
 const analytical=main.querySelector('.species'),sectionTitle=main.querySelector('.section'),safety=main.querySelector('#safety'),foot=main.querySelector('.foot');
 const today=[main.querySelector('header'),main.querySelector('.top'),metrics,weather,sectionTitle,analytical,safety,foot];
-const charts=[controls,grid];
-today.forEach(x=>x.dataset.view='today');charts.forEach(x=>x.dataset.view='charts');
+const chartSections=[controls,grid];
+today.forEach(x=>x.dataset.view='today');chartSections.forEach(x=>x.dataset.view='charts');
 const diary=document.createElement('section');diary.className='mobile-page';diary.id='diaryPage';diary.dataset.view='diary';
 diary.innerHTML='<h2 class="m-title">Дневник уловов</h2><div class="m-box"><p>Записи остаются только в памяти этого браузера. Сохраняй резервную копию: при очистке данных телефона записи могут исчезнуть.</p><form id="catchForm" class="f-grid"><label>Вид рыбы<select name="species" required><option>Судак</option><option>Щука</option><option>Окунь</option><option>Другая</option></select></label><label>Дата и время<input name="date" type="datetime-local" required></label><label>Вес, кг (необязательно)<input name="weight" type="number" min="0" step=".01" placeholder="1.25"></label><label>Приманка<input name="lure" maxlength="120" placeholder="Силикон 3 дюйма"></label><label class="full">Точка / ориентир<input name="spot" maxlength="140" placeholder="Плёс, бровка, глубина"></label><label class="full">Координаты (по желанию)<input name="coords" id="coords" maxlength="70" placeholder="57.146, 33.108"></label><div class="full"><button type="button" id="getgps" class="m-btn secondary">◎ Подставить мою GPS-точку</button><div id="gpsStatus" class="source-note"></div></div><label class="full">Заметки<textarea name="notes" maxlength="700" placeholder="Глубина, проводка, поклёвка, погода"></textarea></label><button type="submit" class="m-btn full">+ Сохранить улов</button></form></div><div class="infohead"><h3>Мои записи</h3><button id="exportDiary" type="button" class="m-btn secondary">Экспорт JSON</button></div><div id="diaryList" class="diarystack"></div>';
 const reports=document.createElement('section');reports.className='mobile-page';reports.id='reportsPage';reports.dataset.view='reports';
@@ -22,7 +22,7 @@ diary.querySelector('[name=date]').value=timeLocal();
 function tab(id){for(const el of document.querySelectorAll('[data-view]'))el.classList.toggle('is-hidden',el.dataset.view!==id);
 for(const x of [diary,reports])x.classList.toggle('active',x.dataset.view===id);
 nav.querySelectorAll('button').forEach(b=>{const on=b.dataset.tab===id;b.classList.toggle('active',on);b.setAttribute('aria-current',on?'page':'false')});
-try{history.replaceState(null,'','#'+id)}catch(e){}
+try{window.history.replaceState(null,'','#'+id)}catch(e){}
 window.scrollTo({top:0,behavior:'instant'});if(id==='charts')requestAnimationFrame(()=>{if(typeof charts!=='undefined')Object.values(charts).forEach(c=>c?.resize?.())});}
 nav.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>tab(b.dataset.tab)));
 tab(['today','charts','diary','reports'].includes(location.hash.slice(1))?location.hash.slice(1):'today');
