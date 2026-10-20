@@ -2,7 +2,7 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const nav=document.createElement('nav');nav.className='mobile-nav';nav.setAttribute('aria-label','Разделы приложения');
-nav.innerHTML=[['today','◉','Сегодня'],['charts','▥','Графики'],['diary','✎','Дневник'],['reports','≋','Отчёты']].map(([id,ico,label])=>'<button type="button" data-tab="'+id+'" aria-label="'+label+'"><span class="navicon">'+ico+'</span>'+label+'</button>').join('');
+nav.innerHTML=[['today','◉','Сегодня'],['charts','▥','Графики'],['water','≈','Вода'],['reports','≋','Отчёты']].map(([id,ico,label])=>'<button type="button" data-tab="'+id+'" aria-label="'+label+'"><span class="navicon">'+ico+'</span>'+label+'</button>').join('');
 document.body.append(nav);
 const dock=document.createElement('aside');dock.id='weatherDock';dock.className='weather-dock';dock.setAttribute('aria-label','Погодные показатели · быстрый переход к графикам');
 dock.innerHTML=[
@@ -41,10 +41,14 @@ diary.innerHTML='<h2 class="m-title">Дневник уловов</h2><div class=
 const reports=document.createElement('section');reports.className='mobile-page';reports.id='reportsPage';reports.dataset.view='reports';
 reports.innerHTML='<h2 class="m-title">Селигер · рыболовный радар</h2><div class="m-box"><h3>Русфишинг: отчёты с водоёма</h3><p>Открывай оригинальные сообщения рыболовов. Пока это ссылки на источники, а не автоматическая выгрузка; свежесть уловов приложение не выдумывает.</p><p><a href="https://www.rusfishing.ru/forum/threads/seliger.1485/unread" target="_blank" rel="noopener noreferrer">↗ Последние сообщения по Селигеру</a></p><p><a href="https://www.rusfishing.ru/forum/forums/ozero-seliger.80/" target="_blank" rel="noopener noreferrer">↗ Темы по плёсам и акваториям</a></p><p class="source-note">Идея перенесена из RYBA: отделяем отзывы с водоёма от модельного прогноза и проверяем давность сообщения. Без даты и подтверждения места не корректируем индекс клёва.</p></div><div class="m-box"><h3>Октябрьские ориентиры</h3><p><b>Судак:</b> проверять локальные ямы и бровки, ориентируясь на эхолот; в сумерках учитывать сокращение светового дня.</p><p><b>Щука:</b> искать границы травы, пупки и перепады глубин. Не считать один отчёт доказательством общей активности.</p><p><b>Окунь:</b> оценивать скопления кормовой рыбы и участки с меньшим волнением.</p></div><div class="m-box"><h3>Безопасность с лодки</h3><p>На Селигере ветер у Осташкова не гарантирует такую же волну на другом плёсе. Для открытой воды особенно важны направление ветра, длина разгона волны и фактические порывы.</p><p>Осенью: постоянно надетый спасжилет, связь, сухой аварийный комплект и маршрут возвращения. Данные сайта не являются разрешением на выход.</p></div>';
 grid.after(diary,reports);
+const waterPage=document.createElement('section');waterPage.className='mobile-page';waterPage.id='waterPage';waterPage.dataset.view='water';
+waterPage.innerHTML='<h2 class="m-title">Селигер · вода</h2><div class="water-grid"><article class="m-box"><h3>Уровень воды · Осташков</h3><div class="water-reading" id="lakeLevel">—</div><p id="lakeLevelDate">Загружаем измерения…</p></article><article class="m-box"><h3>Температура воды</h3><div class="water-reading" id="lakeTemperature">—</div><p id="lakeTemperatureDate">Проверяем доступные измерения…</p></article></div><p class="source-note" id="lakeCaution">Уровень — сантиметры над нулём гидропоста, не глубина озера. Устаревшие измерения не используем как текущие.</p><p><a href="https://ris.kim-online.ru/" target="_blank" rel="noopener noreferrer">Первоисточник: Канал имени Москвы ↗</a></p><p><a href="https://allrivers.info/gauge/seliger-ostashkov" target="_blank" rel="noopener noreferrer">История гидропоста и температуры воды ↗</a></p><div class="m-box"><h3>Что важно для клёва 22–25 октября</h3><p>Сильнее одного числа температуры важны её изменение, перемешивание верхнего слоя ветром, устойчивость уровня, расположение кормовой рыбы и рельеф.</p><p>Ветер и порывы влияют и на возможность безопасно ловить с лодки. Данные по волне открытых плёсов не выдаются за измеренные, если нет проверенного источника.</p><p>Время суток, освещённость и изменения давления рассматриваем как вспомогательные факторы, а не гарантии улова.</p></div>';
+grid.after(waterPage);
+
 const timeLocal=()=>{const d=new Date(),pad=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes())};
 diary.querySelector('[name=date]').value=timeLocal();
 let previousTab=null;
-const tabOrder=['today','charts','diary','reports'];
+const tabOrder=['today','charts','water','reports'];
 function tab(id){
  const entering=previousTab!==null&&previousTab!==id;
  const direction=tabOrder.indexOf(id)>=tabOrder.indexOf(previousTab)?'forward':'backward';
@@ -54,7 +58,7 @@ function tab(id){
   el.classList.remove('view-enter-forward','view-enter-backward');
   if(visible&&entering){void el.offsetWidth;el.classList.add('view-enter-'+direction);}
  }
- for(const x of [diary,reports])x.classList.toggle('active',x.dataset.view===id);
+ for(const x of [diary,reports,waterPage])x.classList.toggle('active',x.dataset.view===id);
  nav.querySelectorAll('button').forEach(b=>{const on=b.dataset.tab===id;b.classList.toggle('active',on);b.setAttribute('aria-current',on?'page':'false')});
  previousTab=id;
  try{window.history.replaceState(null,'','#'+id)}catch(e){}
@@ -62,7 +66,7 @@ function tab(id){
  if(id==='charts')requestAnimationFrame(()=>{if(typeof charts!=='undefined')Object.values(charts).forEach(c=>c?.resize?.())});
 }
 nav.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>tab(b.dataset.tab)));
-tab(['today','charts','diary','reports'].includes(location.hash.slice(1))?location.hash.slice(1):'today');
+tab(['today','charts','water','reports'].includes(location.hash.slice(1))?location.hash.slice(1):'today');
 const storeKey='seliger_diary_v1';
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function records(){try{const x=JSON.parse(localStorage.getItem(storeKey)||'[]');return Array.isArray(x)?x:[]}catch(e){return []}}
@@ -72,6 +76,28 @@ $('diaryList').onclick=e=>{const b=e.target.closest('.remove-log');if(!b||!confi
 $('exportDiary').onclick=()=>{const blob=new Blob([JSON.stringify({source:'SELIGER',exported_at:new Date().toISOString(),catches:records()},null,2)],{type:'application/json'}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='seliger-diary-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),2000)};
 $('getgps').onclick=()=>{if(!navigator.geolocation){$('gpsStatus').textContent='GPS недоступен';return}$('gpsStatus').textContent='Ожидаем разрешение…';navigator.geolocation.getCurrentPosition(p=>{$('coords').value=p.coords.latitude.toFixed(5)+', '+p.coords.longitude.toFixed(5);$('gpsStatus').textContent='Координаты добавлены только в форму, до сохранения никуда не отправляются.'},e=>{$('gpsStatus').textContent='Не удалось определить GPS: '+e.message},{enableHighAccuracy:true,timeout:12000,maximumAge:30000})};
 showDiary();
+const reportEscape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function loadReports(){
+ const el=document.getElementById('reportsPage');
+ try{
+  const r=await fetch('data/reports.json?v='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);
+  const d=await r.json();const items=Array.isArray(d.reports)?d.reports:[];
+  el.innerHTML='<h2 class="m-title">Русфишинг · Селигер</h2><p class="source-note">Проверенные выдержки с датами и первоисточниками. Это НЕ прямая лента последних уловов; новых октябрьских отчётов 2026 пока не подтверждено. Последняя редакционная проверка: '+reportEscape(d.updated_at)+'</p><div class="report-list">'+items.map(x=>'<article class="m-box report-card"><div class="report-head"><strong>'+reportEscape(x.fish)+'</strong><time>'+reportEscape(x.date)+'</time></div><p class="source-note">'+reportEscape(x.area)+' · '+reportEscape(x.kind)+'</p><p>'+reportEscape(x.text)+'</p><a target="_blank" rel="noopener noreferrer" href="'+reportEscape(x.source)+'">Открыть сообщение на Русфишинге ↗</a></article>').join('')+'</div><div class="m-box"><a href="https://www.rusfishing.ru/forum/threads/seliger.1485/unread" target="_blank" rel="noopener noreferrer">Проверить самые новые сообщения на форуме ↗</a></div>';
+ }catch(e){el.innerHTML='<h2 class="m-title">Русфишинг · Селигер</h2><p>Отчёты временно недоступны. <a target="_blank" rel="noopener noreferrer" href="https://www.rusfishing.ru/forum/threads/seliger.1485/">Открыть форум ↗</a></p>'}
+}
+async function loadWater(){
+ try{const r=await fetch('data/water.json?v='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const d=await r.json();
+ const level=d.level||{},temperature=d.temperature||{};
+ const age=x=>{if(!x?.measured_at)return null;const t=Date.parse(x.measured_at);return Number.isFinite(t)?Math.max(0,(Date.now()-t)/3600000):null};
+ const valid=x=>age(x)!==null&&age(x)<=48;
+ $('lakeLevel').textContent=valid(level)?Number(level.cm).toFixed(0)+' см':'Нет свежих данных';
+ $('lakeLevelDate').textContent=level.measured_at?'Измерено: '+level.measured_at+' · '+(valid(level)?'актуальность ≤48 ч':'устарело, не для прогноза'):'Достоверных показаний пока нет';
+ $('lakeTemperature').textContent=valid(temperature)?Number(temperature.celsius).toFixed(1)+' °C':'Нет свежих данных';
+ $('lakeTemperatureDate').textContent=temperature.measured_at?'Измерено: '+temperature.measured_at+' · '+(valid(temperature)?'актуальность ≤48 ч':'устарело, не для прогноза'):'Свежей температуры воды пока нет';
+ }catch(e){$('lakeLevelDate').textContent='Данные гидропоста ещё не получены';$('lakeTemperatureDate').textContent='Данные о температуре воды ещё не получены'}
+}
+loadReports();loadWater();
+
 function dateKey(d){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Moscow',year:'numeric',month:'2-digit',day:'2-digit'}).format(d)}
 async function dayWeather(){try{const u='https://api.open-meteo.com/v1/forecast?latitude=57.146&longitude=33.108&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,wind_gusts_10m_max,sunrise,sunset&forecast_days=7&timezone=Europe%2FMoscow&wind_speed_unit=ms';const r=await fetch(u);if(!r.ok)throw Error('HTTP '+r.status);const d=(await r.json()).daily;if(!d?.time)throw Error('Нет данных');const fmt=t=>t?t.slice(11,16):'—';$('daystrip').innerHTML=d.time.slice(0,3).map((date,i)=>'<div class="daycard"><strong>'+escape(new Intl.DateTimeFormat('ru-RU',{weekday:'short',day:'numeric',month:'short'}).format(new Date(date+'T12:00:00+03:00')))+'</strong><div class="daytemp">'+Math.round(d.temperature_2m_max[i])+'° / '+Math.round(d.temperature_2m_min[i])+'°</div><small>Осадки '+Number(d.precipitation_sum[i]??0).toFixed(1)+' мм</small><small>Порывы до '+Math.round(d.wind_gusts_10m_max[i])+' м/с</small><small>☀ '+fmt(d.sunrise[i])+' · ☾ '+fmt(d.sunset[i])+'</small></div>').join('');}catch(e){$('daystrip').innerHTML='<div class="source-note">Сводка по дням сейчас недоступна. Почасовые графики могут работать отдельно.</div>'}}
 dayWeather();
