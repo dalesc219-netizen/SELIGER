@@ -7,7 +7,15 @@ const mmHg=hpa=>hpa==null?null:hpa*0.750061683;
 function biteAt(i,s){const h=hourly;const v=(key)=>h[key]?.[i]??null;const wind=v('wind_speed_10m'),gust=v('wind_gusts_10m'),rain=v('precipitation'),p=v('pressure_msl'),before=h.pressure_msl?.[Math.max(0,i-3)];if([wind,gust,rain,p,before].some(x=>x==null))return null;const hour=Number(h.time[i].slice(11,13));let score=67-Math.max(0,wind-3)*5-Math.max(0,gust-8)*3-Math.min(25,rain*8)-Math.min(18,Math.abs(p-before)*4);if(s==='zander')score+=hour>=17||hour<=8?12:-5;if(s==='pike')score+=hour>=7&&hour<=17?5:0;if(s==='perch')score+=hour>=9&&hour<=16?8:-5;if(s==='peaceful')score+=hour>=8&&hour<=18?4:-8;return Math.max(5,Math.min(95,Math.round(score)));}
 function opts(unit){return {responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{color:'#a9c1cc',boxWidth:12}},tooltip:{backgroundColor:'#233947'}},scales:{x:{ticks:{color:'#91a7b2',maxTicksLimit:9,maxRotation:0},grid:{color:'#20343f'}},y:{ticks:{color:'#91a7b2',callback:v=>v+unit},grid:{color:'#20343f'}}}}}
 const line=(label,data,color,fill=false)=>({label,data,borderColor:color,backgroundColor:color+'33',borderWidth:2,pointRadius:0,tension:.25,fill,spanGaps:true});
-function make(id,labels,sets,unit='',type='line'){charts[id]?.destroy();charts[id]=new Chart($(id),{type,data:{labels,datasets:sets},options:opts(unit)});}
+function make(id,labels,sets,unit='',type='line'){
+ charts[id]?.destroy();
+ const chartOpts=opts(unit);
+ const now=nowMoscowHour(),indexes=indices();
+ chartOpts.nowIndex=indexes.findIndex(i=>hourly?.time?.[i]>=now);
+ chartOpts.nowMarker=chartOpts.nowIndex>=0&&chartOpts.nowIndex<labels.length;
+ chartOpts.markPast=period==='6h'&&chartOpts.nowIndex>0;
+ charts[id]=new Chart($(id),{type,data:{labels,datasets:sets},options:chartOpts});
+}
 function nowMoscowHour(){const fmt=new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',hourCycle:'h23'});const p=Object.fromEntries(fmt.formatToParts(new Date()).map(x=>[x.type,x.value]));return p.year+'-'+p.month+'-'+p.day+'T'+p.hour+':00';}
 function indices(){
  if(!hourly?.time?.length)return [];
