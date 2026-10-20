@@ -7,12 +7,28 @@ const assert = require('node:assert/strict');
   for(const scenario of scenarios){
    const page=await browser.newPage({viewport:{width:scenario.width,height:scenario.height},deviceScaleFactor:3,isMobile:true,hasTouch:true});
    const errors=[];page.on('pageerror',e=>errors.push(e.message));
+   await page.route('https://api.open-meteo.com/**', async route=>{
+    const u=new URL(route.request().url());
+    const date=new Date();const first=new Date(Date.UTC(date.getUTCFullYear(),date.getUTCMonth(),date.getUTCDate()-2));
+    const times=Array.from({length:18*24},(_,i)=>new Date(first.getTime()+i*3600000).toISOString().slice(0,16));
+    let response;
+    if(u.searchParams.has('daily')){
+     const dates=times.filter(t=>t.endsWith('T00:00')).slice(0,7).map(t=>t.slice(0,10));
+     response={daily:{time:dates,temperature_2m_max:dates.map(()=>10),temperature_2m_min:dates.map(()=>3),precipitation_sum:dates.map(()=>2),wind_gusts_10m_max:dates.map(()=>8),sunrise:dates.map(d=>d+'T07:30'),sunset:dates.map(d=>d+'T17:30')}};
+    } else {
+     const names=(u.searchParams.get('hourly')||'').split(',');const hourly={time:times};
+     names.forEach((name,j)=>hourly[name]=times.map((_,i)=>name==='wind_direction_10m'?230:name==='pressure_msl'?1013+Math.sin(i/10)*2:name==='precipitation_probability'?20:name==='precipitation'?i%14===0?1.2:0:8+j+Math.sin(i/8)*2));
+     response={hourly,current:{time:times[49],temperature_2m:7,apparent_temperature:4,wind_speed_10m:3,wind_gusts_10m:6,pressure_msl:1013,precipitation:0}};
+    }
+    await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(response)});
+   });
    await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded'});
    await page.locator('.mobile-nav button[data-tab="today"]').waitFor();
    const oversize=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+2);
    assert.equal(oversize,false,scenario.name+' horizontal document overflow');
    await page.locator('[data-tab="charts"]').click();
    await page.locator('#tempChart').waitFor({state:'visible'});
+   await page.waitForFunction(()=>{const c=document.getElementById('tempChart');return c.width>200&&c.height>100&&c.getContext('2d').getImageData(0,0,c.width,c.height).data.some(v=>v>0)},{timeout:15000});
    assert.ok(await page.locator('.chart-jumps button').count()>=6);
    await page.locator('.chart-jumps [data-chart="windChart"]').click();
    await page.locator('[data-tab="diary"]').click();
