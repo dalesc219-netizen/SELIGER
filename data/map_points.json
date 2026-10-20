@@ -1,0 +1,64 @@
+{
+  "updated_at": "2026-10-20",
+  "geometry_notice": "Метки обозначают ориентиры на карте, а НЕ координаты поклёвок. Точность для обеих меток — населённый пункт или длинный участок протоки.",
+  "points": [
+    {
+      "id": "novye-eltsy-2026-08",
+      "name": "Новые Ельцы · август 2026",
+      "lat": 57.2815,
+      "lon": 32.9044,
+      "accuracy": "settlement",
+      "radius_m": 1700,
+      "observed_at": "2026-08-23",
+      "kind": "catch",
+      "fish": [
+        "плотва",
+        "подлещик"
+      ],
+      "summary": "Участник сообщил о двух плотвицах и подлещике на пикер за короткую утреннюю рыбалку. Отметка стоит у деревни Новые Ельцы, не на месте ловли.",
+      "source": "https://www.rusfishing.ru/forum/threads/seliger.1485/page-246",
+      "post_number": "3689",
+      "locator_source": "https://nataturka.ru/muzey-usadba/usadba-novye-elcy.html",
+      "locator_note": "Геопривязка по центру деревни; береговая точка не указана."
+    },
+    {
+      "id": "polonovka-2026-08",
+      "name": "Полоновка · август 2026",
+      "lat": 57.33056,
+      "lon": 33.075,
+      "accuracy": "waterway",
+      "radius_m": 4500,
+      "observed_at": "2026-09-01",
+      "kind": "catch",
+      "fish": [
+        "плотва",
+        "язь",
+        "окунь",
+        "подлещик",
+        "щука",
+        "судак"
+      ],
+      "summary": "Отчёт за 2–10 августа: лагерь в протоке Полоновка между Заплавьем и Турской; ловили белую рыбу и хищника. Метка — ориентир на протоке, конкретные точки и 'вторая яма' не установлены.",
+      "source": "https://www.rusfishing.ru/forum/threads/seliger.1485/page-247",
+      "post_number": "3694",
+      "locator_source": "https://www.plantarium.ru/page/landscapes/point/10634.html",
+      "locator_note": "Географическая точка на реке Полоновка из независимого справочника; точность только до акватории."
+    }
+  ],
+  "unlocated_references": [
+    {
+      "id": "beresovsky-2026-08",
+      "date": "2026-08-10",
+      "place": "Берёзовский плёс",
+      "reason": "Акватория обширная; в отчёте нет проверяемой точки улова.",
+      "source": "https://www.rusfishing.ru/forum/threads/seliger.1485/page-246"
+    },
+    {
+      "id": "general-2026-09",
+      "date": "2026-09-07",
+      "place": "Селигер (не указано где)",
+      "reason": "В сообщении нет конкретной географической привязки.",
+      "source": "https://www.rusfishing.ru/forum/threads/seliger.1485/page-247"
+    }
+  ]
+}
