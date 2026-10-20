@@ -129,7 +129,7 @@ async function dayWeather(){
   let daily=null,mode='сохранённый прогноз';
   try {
    const r=await fetch('data/latest.json?v='+Date.now(),{cache:'no-store'});
-   if(r.ok)daily=(await r.json()).daily;
+   if(r.ok){const snapshot=await r.json();daily=snapshot.daily;const age=Date.now()-Date.parse(snapshot.saved_at||'');mode=!Number.isFinite(age)?'резервная копия без даты':age>12*3600000?'⚠ сохранённый прогноз старше 12 ч':age>6*3600000?'⚠ сохранённый прогноз старше 6 ч':'сохранённый прогноз';}
   }catch(e){}
   try {
    const u='https://api.open-meteo.com/v1/forecast?latitude=57.146&longitude=33.108&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,wind_gusts_10m_max,sunrise,sunset&forecast_days=7&timezone=Europe%2FMoscow&wind_speed_unit=ms';
