@@ -342,3 +342,15 @@ html{scroll-padding-top:calc(var(--dock-bottom) + 78px)}
  .boat-mode .metric .val{font-size:24px}
 }
 @media(min-width:901px) and (min-height:551px){.thumb-dock,.thumb-zoom{display:none!important}}
+
+/* Offline warning must not cover thumb controls or map zoom. */
+@media(max-width:900px), (orientation:landscape) and (max-height:550px){
+ .network-badge.show{
+  bottom:auto!important;top:calc(var(--dock-bottom) + 9px);
+  z-index:2147483643;pointer-events:none;
+  font-size:13px;line-height:1.35;padding:8px 11px
+ }
+}
+@media(orientation:landscape) and (max-height:550px){
+ .network-badge.show{top:calc(var(--dock-bottom) + 4px);max-width:590px}
+}
