@@ -3,8 +3,14 @@
   "estimated_total_pages": 248,
   "pages_scanned": [],
   "pages_completed": 0,
-  "status": "not_started",
+  "status": "blocked",
   "candidate_count": 0,
-  "errors": [],
-  "notice": "Посты основной темы Селигер. Поиск упоминаний не является проверкой координат."
+  "errors": [
+    {
+      "page": 248,
+      "error": "HTTP Error 403: Forbidden"
+    }
+  ],
+  "notice": "Candidate terms are not verified catches or map coordinates.",
+  "checked_at": "2026-10-20T09:15:24.715279+00:00"
 }
