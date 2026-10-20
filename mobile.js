@@ -4,6 +4,24 @@ const $=id=>document.getElementById(id);
 const nav=document.createElement('nav');nav.className='mobile-nav';nav.setAttribute('aria-label','Разделы приложения');
 nav.innerHTML=[['today','◉','Сегодня'],['charts','▥','Графики'],['diary','✎','Дневник'],['reports','≋','Отчёты']].map(([id,ico,label])=>'<button type="button" data-tab="'+id+'" aria-label="'+label+'"><span class="navicon">'+ico+'</span>'+label+'</button>').join('');
 document.body.append(nav);
+const dock=document.createElement('aside');dock.id='weatherDock';dock.className='weather-dock';dock.setAttribute('aria-label','Погодные показатели · быстрый переход к графикам');
+dock.innerHTML=[
+ ['tempChart','thermo','🌡','temp','Температура'],
+ ['windChart','wind','➤','wind','Ветер'],
+ ['rainChart','rain','◉','bite','Осадки'],
+ ['pressureChart','pressure','◎','pressure','Давление']
+].map(([target,klass,ico,source,title])=>'<button type="button" class="dock-item '+klass+'" data-chart="'+target+'" aria-label="'+title+'" title="'+title+'"><span class="dock-symbol">'+ico+'</span><span class="dock-value" data-source="'+source+'">—</span></button>').join('');
+document.body.append(dock);
+let activeDock='tempChart';
+function markDock(id){activeDock=id;dock.querySelectorAll('button').forEach(b=>b.classList.toggle('dock-active',b.dataset.chart===id));}
+function syncDock(){dock.querySelectorAll('[data-source]').forEach(x=>{const src=document.getElementById(x.dataset.source);if(src)x.textContent=src.textContent.trim()||'—'})}
+markDock(activeDock);
+dock.addEventListener('click',e=>{const b=e.target.closest('[data-chart]');if(!b)return;markDock(b.dataset.chart);tab('charts');setTimeout(()=>document.getElementById(b.dataset.chart)?.closest('.panel')?.scrollIntoView({behavior:'smooth',block:'start'}),110)});
+document.addEventListener('seliger:weather',syncDock);
+const sourceIds=['temp','wind','bite','pressure'];
+const observer=new MutationObserver(syncDock);
+sourceIds.forEach(id=>{const el=document.getElementById(id);if(el)observer.observe(el,{childList:true,characterData:true,subtree:true})});
+
 const main=document.querySelector('main');
 const controls=main.querySelector('.controls'),metrics=main.querySelector('.metrics'),grid=main.querySelector('.grid');
 const weather=document.createElement('div');weather.className='weather-strip';weather.id='daystrip';weather.setAttribute('aria-label','Ближайшие три дня');
@@ -15,7 +33,7 @@ const chartJump=document.createElement('div');chartJump.className='chart-jumps';
 chartJump.innerHTML=[['tempChart','Температура'],['windChart','Ветер'],['rainChart','Осадки'],['pressureChart','Давление'],['biteChart','Клёв'],['historyChart','История']].map(([id,name])=>'<button type="button" data-chart="'+id+'">'+name+'</button>').join('');
 controls.after(chartJump);
 chartSections.push(chartJump);
-chartJump.addEventListener('click',event=>{const b=event.target.closest('[data-chart]');if(!b)return;const target=document.getElementById(b.dataset.chart);if(target){target.closest('.panel')?.scrollIntoView({behavior:'smooth',block:'start'});b.blur();}});
+chartJump.addEventListener('click',event=>{const b=event.target.closest('[data-chart]');if(!b)return;const target=document.getElementById(b.dataset.chart);if(target){markDock(b.dataset.chart);target.closest('.panel')?.scrollIntoView({behavior:'smooth',block:'start'});b.blur();}});
 
 today.forEach(x=>x.dataset.view='today');chartSections.forEach(x=>x.dataset.view='charts');
 const diary=document.createElement('section');diary.className='mobile-page';diary.id='diaryPage';diary.dataset.view='diary';
