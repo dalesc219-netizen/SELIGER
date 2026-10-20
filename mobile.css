@@ -33,3 +33,28 @@ main{padding-bottom:calc(90px + env(safe-area-inset-bottom))}
 @media(max-width:390px){.weather-strip{grid-template-columns:1fr 1fr}.metrics{gap:6px}.metric .val{font-size:21px}.daycard{padding:9px}}
 @media(orientation:landscape) and (max-height:550px){main{padding:10px 15px 72px}.hero{font-size:25px}.mobile-nav{padding-top:3px}.mobile-nav button{flex-direction:row;justify-content:center;gap:6px;min-height:40px;font-size:12px}.mobile-nav .navicon{font-size:17px}.metrics{grid-template-columns:repeat(4,1fr)}.weather-strip{grid-template-columns:repeat(3,1fr)}.chart{height:260px}.panel.wide .chart{height:300px}.grid{grid-template-columns:1fr 1fr}}
 @media(min-width:801px){.mobile-nav{position:sticky;top:0;bottom:auto;max-width:650px;margin:15px auto;border:1px solid #34505d;border-radius:15px;padding:6px}.mobile-nav button{flex-direction:row;justify-content:center;font-size:13px}.mobile-page{max-width:860px;margin:auto}}
+
+/* v0.3 Mobile navigation and chart usability */
+.chart-jumps{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding:5px 1px 13px;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch}
+.chart-jumps::-webkit-scrollbar,.controls::-webkit-scrollbar{display:none}
+.chart-jumps button{white-space:nowrap;flex-shrink:0;font-size:12px;min-height:42px;border-radius:99px;background:#15313b;color:#d3e6e9;border:1px solid #305662;padding:9px 13px}
+.chart-jumps button:active{background:#2c6255}
+.chart-jumps button:focus-visible,.mobile-nav button:focus-visible,.controls button:focus-visible{outline:2px solid #8af5ce;outline-offset:2px}
+.panel{scroll-margin-top:20px}
+.chart{touch-action:pan-y}
+#historyMessage{line-height:1.5}
+@media (max-width:800px) and (orientation:portrait) {
+ .chart{height:255px}
+ .panel.wide .chart{height:275px}
+ .grid{row-gap:12px}
+ .chart-jumps{position:sticky;top:0;z-index:12;background:#09141cf2;margin:0 -12px;padding:8px 12px 12px}
+ .panel{scroll-margin-top:70px}
+}
+@media (orientation:landscape) and (max-height:550px) {
+ .chart-jumps{position:sticky;top:0;z-index:12;background:#09141cf2;margin:0 -15px;padding:6px 15px}
+ .chart-jumps button{min-height:36px}
+ .panel{scroll-margin-top:60px}
+ .grid{column-gap:12px}
+ .panel.wide{grid-column:1 / -1}
+}
+@media (prefers-reduced-motion:reduce) {html{scroll-behavior:auto}}
