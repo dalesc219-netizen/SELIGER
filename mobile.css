@@ -255,3 +255,90 @@ html{scroll-padding-top:calc(var(--dock-bottom) + 78px)}
 .seliger-region-label.leaflet-tooltip:before{border-top-color:#e0c47b}
 .map-fallback-links{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}
 .map-fallback-links a{background:#1b4656;border:1px solid #547f90;border-radius:8px;padding:8px 10px;font-size:12px;color:#d4f2ff}
+
+/* 2026-10-20: thumb-reach controls for iPhone 17 Pro and compact landscape Safari.
+ * One bottom context row, not a second navigation bar; the five app tabs remain unchanged.
+ */
+.visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.thumb-dock,.thumb-zoom{display:none}
+@media(max-width:900px), (orientation:landscape) and (max-height:550px){
+ :root{--one-hand-nav:calc(73px + env(safe-area-inset-bottom,0px))}
+ body>main{padding-bottom:calc(172px + env(safe-area-inset-bottom,0px))!important}
+ body>.mobile-nav button{min-height:44px!important}
+ .weather-dock .dock-item{min-height:44px!important}
+ .chart-jumps button{min-height:44px!important;padding:10px 14px;font-size:13px}
+ .map-layer-toolbar button,.map-card-actions button,.research-locate,.research-filter select,
+ #mapGps,#mapFilter,#mapAll,#toggleHistoricalDepths,.controls #refresh{min-height:44px!important}
+ .map-layer-toolbar button,.research-locate,.map-toolbar button{font-size:13px}
+ .m-box p,.m-box li{font-size:13px}
+ .source-note{font-size:12px}
+ .thumb-dock{
+   position:fixed;display:flex;align-items:stretch;gap:6px;
+   bottom:var(--one-hand-nav);left:max(8px,env(safe-area-inset-left,0px));
+   right:max(8px,env(safe-area-inset-right,0px));
+   height:58px;padding:5px;border:1px solid #567683;border-radius:15px;
+   background:#102a36f5;box-shadow:0 8px 25px #000a;
+   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+   z-index:2147483645;touch-action:manipulation
+ }
+ .thumb-dock button,.thumb-dock select,.thumb-zoom button{
+   min-width:44px;min-height:44px;border-radius:10px;padding:8px;
+   border:1px solid #507381;background:#224453;color:#edf9fa;
+   font-size:13px;font-weight:700;touch-action:manipulation
+ }
+ .thumb-dock button:focus-visible,.thumb-dock select:focus-visible,.thumb-zoom button:focus-visible{
+   outline:2px solid #8bf3d0;outline-offset:2px
+ }
+ .thumb-dock .boat-toggle{width:93px;flex:0 0 93px;color:#fcf2cd;background:#3b4144}
+ .thumb-dock .boat-toggle[aria-pressed="true"]{background:#236248;border-color:#95e5bc;color:#f2fff5}
+ .thumb-dock .thumb-actions{display:none;flex:1;gap:5px;align-items:stretch;min-width:0}
+ .thumb-dock[data-tab="today"] [data-thumb-tab="today"],
+ .thumb-dock[data-tab="charts"] [data-thumb-tab="charts"],
+ .thumb-dock[data-tab="map"] [data-thumb-tab="map"],
+ .thumb-dock[data-tab="water"] [data-thumb-tab="water"],
+ .thumb-dock[data-tab="reports"] [data-thumb-tab="reports"]{display:flex}
+ .thumb-actions button{flex:1;min-width:0}
+ .thumb-actions [data-thumb-period]{padding:7px 2px;flex:1}
+ .thumb-actions [data-thumb-period].active{background:#26705b;border-color:#86eac0}
+ #thumbFish{flex:2;min-width:0;width:0;font-size:13px;padding-left:8px;padding-right:3px}
+ #thumbGps{flex:1.15}
+ #thumbAll{flex:.8}
+ .thumb-zoom{
+   position:fixed;right:12px;bottom:calc(var(--one-hand-nav) + 69px);
+   z-index:2147483644;flex-direction:column;gap:7px;
+ }
+ .thumb-zoom[data-tab="map"]{display:flex}
+ .thumb-zoom button{width:48px;height:48px;min-height:48px;font-size:24px;
+   background:#173c4def;border:1px solid #80bdc7;box-shadow:0 3px 14px #0008}
+ .network-badge.show{bottom:calc(var(--one-hand-nav) + 66px);z-index:2147483646}
+ .boat-mode .top .sub{display:none}
+ .boat-mode .hero{font-size:clamp(23px,5vw,31px);margin-bottom:2px}
+ .boat-mode .fish p,.boat-mode .foot,.boat-mode .factor-grid{display:none}
+ .boat-mode .fish .score{font-size:30px}
+ .boat-mode .metric .val{font-size:clamp(26px,6vw,34px)}
+ .boat-mode .controls[data-view="charts"],.boat-mode .chart-jumps[data-view="charts"]{display:none!important}
+ .boat-mode .map-toolbar{display:none}
+ .boat-mode .m-box{padding:13px}
+ .boat-mode .weather-dock .dock-value{font-size:13px}
+ .boat-mode .weather-dock .dock-item{min-height:48px!important}
+ .boat-mode .trip-scenario-card{padding:9px 11px}
+}
+@media(orientation:landscape) and (max-height:550px){
+ :root{--one-hand-nav:calc(51px + env(safe-area-inset-bottom,0px))}
+ body>.mobile-nav{padding:3px 8px calc(3px + env(safe-area-inset-bottom,0px))}
+ body>.mobile-nav button{min-height:44px!important;font-size:11px}
+ body>main{padding-bottom:calc(139px + env(safe-area-inset-bottom,0px))!important}
+ .thumb-dock{height:50px;left:max(12px,env(safe-area-inset-left,0px));
+   right:max(12px,env(safe-area-inset-right,0px));padding:2px 5px}
+ .thumb-dock .boat-toggle{width:100px;flex-basis:100px}
+ .thumb-dock button,.thumb-dock select{min-height:44px;padding:6px 9px}
+ .thumb-zoom{bottom:calc(var(--one-hand-nav) + 57px);right:max(12px,env(safe-area-inset-right,0px));flex-direction:row}
+ .thumb-zoom button{width:44px;height:44px;min-height:44px;font-size:22px}
+ .network-badge.show{bottom:calc(var(--one-hand-nav) + 54px)}
+ .weather-dock .dock-item{min-height:44px!important}
+ .boat-mode .weather-dock .dock-item{min-height:44px!important}
+ .boat-mode .hero{font-size:22px}
+ .boat-mode .metrics{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .boat-mode .metric .val{font-size:24px}
+}
+@media(min-width:901px) and (min-height:551px){.thumb-dock,.thumb-zoom{display:none!important}}
