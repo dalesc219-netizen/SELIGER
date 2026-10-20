@@ -5,6 +5,13 @@ const checks=[];
 const issues=[];
 const out='audit-artifacts';
 fs.mkdirSync(out,{recursive:true});
+async function tapTab(page,id){
+ const b=page.locator('.mobile-nav [data-tab="'+id+'"]');
+ await b.scrollIntoViewIfNeeded();
+ const r=await b.boundingBox();if(!r)throw Error('Bottom tab not visible: '+id);
+ await page.touchscreen.tap(r.x+r.width/2,r.y+r.height/2);
+ await page.waitForTimeout(160);
+}
 async function audit(engine,name,w,h){
  const browser=await engine.launch({headless:true});
  const page=await browser.newPage({viewport:{width:w,height:h},deviceScaleFactor:2,isMobile:true,hasTouch:true,locale:'ru-RU',timezoneId:'Europe/Moscow'});
@@ -27,7 +34,7 @@ async function audit(engine,name,w,h){
   const links=await page.locator('link[rel="icon"]').count();
   record('Seliger icon linked',links>=1,String(links));
   await page.screenshot({path:out+'/'+name+'-'+(w<h?'portrait':'landscape')+'-home.png',fullPage:true});
-  await page.locator('.mobile-nav [data-tab="charts"]').click();
+  await tapTab(page,'charts');
   await page.locator('#tempChart').waitFor({state:'visible',timeout:8000});
   await page.waitForTimeout(350);
   const draw=await page.evaluate(()=>['tempChart','windChart','rainChart','pressureChart','biteChart'].map(id=>{const c=document.getElementById(id);if(c.width<50||c.height<50)return{id,w:c.width,h:c.height,drawn:false};const data=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let used=0;for(let k=3;k<data.length;k+=4)if(data[k]>0)used++;return{id,w:c.width,h:c.height,drawn:used>150,pixels:used}}));
@@ -38,14 +45,14 @@ async function audit(engine,name,w,h){
   record('Period selection 7d', (await page.locator('#periodSummary').innerText()).includes('7 дней'));
   await page.locator('#weatherDock button[data-chart="windChart"]').click();
   record('Weather dock opens chart',(await page.locator('#windChart').isVisible()));
-  await page.locator('.mobile-nav [data-tab="map"]').click();
+  await tapTab(page,'map');
   await page.locator('#mapPage').waitFor({state:'visible',timeout:9000});
   await page.locator('.map-report-card').first().waitFor({state:'visible',timeout:9000});
   record('Map reports loaded', (await page.locator('.map-report-card').count())>=2);
   await page.screenshot({path:out+'/'+name+'-'+(w<h?'portrait':'landscape')+'-map.png',fullPage:true});
-  await page.locator('.mobile-nav [data-tab="water"]').click();
+  await tapTab(page,'water');
   record('Water monitoring',(await page.locator('#waterPage').isVisible()));
-  await page.locator('.mobile-nav [data-tab="reports"]').click();
+  await tapTab(page,'reports');
   record('Reports navigation',(await page.locator('#reportsPage').isVisible()));
   record('No JavaScript errors',errors.length===0,JSON.stringify(errors));
   console.log('AUDIT',name,w+'x'+h,JSON.stringify({status,metrics,position,graphs:draw,errors,failed:failed.slice(0,6)}));
