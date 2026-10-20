@@ -23,7 +23,45 @@ function render(){if(!hourly)return;if(typeof Chart==='undefined'){ $('status').
 make('tempChart',labels,[line('Воздух',val('temperature_2m'),'#77ddbd'),line('Ощущается',val('apparent_temperature'),'#e7b56e')],'°');make('windChart',labels,[line('Ветер',val('wind_speed_10m'),'#6aa6e7'),line('Порывы',val('wind_gusts_10m'),'#f0a76d')],' м/с');make('rainChart',labels,[{label:'Осадки',data:val('precipitation'),backgroundColor:'#66aee6',borderRadius:3}], ' мм','bar');make('pressureChart',labels,[line('Давление',val('pressure_msl').map(mmHg),'#c0a3f5')],' мм');make('biteChart',labels,[line('Щука',ix.map(i=>biteAt(i,'pike')),'#78ddaa'),line('Судак',ix.map(i=>biteAt(i,'zander')),'#eeb675'),line('Окунь',ix.map(i=>biteAt(i,'perch')),'#87b9f2'),line('Мирная',ix.map(i=>biteAt(i,'peaceful')),'#d0a6ef')],'');renderHistory(ix);}
 function renderHistory(ix){const key=$('compareMetric').value,valid=history.filter(x=>x.hourly?.time?.length&&x.saved_at);$('historyMessage').textContent=valid.length<2?'Для сравнения нужны минимум два сохранённых выпуска. GitHub Actions накапливает их автоматически после настройки.':`Доступно сохранённых выпусков: ${valid.length}`;const labels=ix.map(i=>hourly.time[i].slice(5).replace('T',' '));const colors=['#70dbb8','#edb86b','#7eaee9','#d7a4e9','#e48d96'];const sets=valid.slice(-5).map((snap,j)=>{const lookup=new Map(snap.hourly.time.map((t,i)=>[t,snap.hourly[key]?.[i]]));return line(new Date(snap.saved_at).toLocaleString('ru-RU',{timeZone:TZ,day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}),ix.map(i=>{let n=lookup.get(hourly.time[i]);return n==null?null:key==='pressure_msl'?mmHg(n):n}),colors[j]);});make('historyChart',labels,sets,key==='pressure_msl'?' мм':'');}
 function current(c){const a=c||{},stamp=a.time||new Intl.DateTimeFormat('sv-SE',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',hourCycle:'h23'}).format(new Date()).replace(' ','T');let i=hourly.time.indexOf(stamp.slice(0,13)+':00');if(i<0)i=hourly.time.findIndex(t=>t>=stamp.slice(0,13));if(i<0)i=hourly.time.length-1;const t=a.temperature_2m??hourly.temperature_2m[i],f=a.apparent_temperature??hourly.apparent_temperature[i],w=a.wind_speed_10m??hourly.wind_speed_10m[i],g=a.wind_gusts_10m??hourly.wind_gusts_10m[i],p=a.pressure_msl??hourly.pressure_msl[i];$('temp').textContent=round(t,1)+'°';$('feels').textContent='Ощущается '+round(f,1)+'°';$('wind').textContent=round(w,1)+' м/с';$('gust').textContent='Порывы '+round(g,1)+' м/с';$('pressure').textContent=round(mmHg(p))+' мм';$('pressureTrend').textContent='Изменение за 3 ч '+round((p-(hourly.pressure_msl[Math.max(0,i-3)]??p))*0.75006,1)+' мм';for(const s of ['pike','zander','perch','peaceful'])$(s+'Score').textContent=(biteAt(i,s)??'—')+'/100';$('bite').textContent=round(a.precipitation??hourly.precipitation[i]??null,1)+' мм';$('biteName').textContent='Количество осадков · сейчас';const bad=(w>=6||g>=10||t<=2||(a.precipitation??hourly.precipitation[i]??0)>=2);$('safety').textContent=bad?'⚠ Возможны сложные условия: холод, порывы ветра или осадки. Перед выходом проверь волну, маршрут и фактическую погоду. Спасжилет обязателен.':'Оперативных пороговых предупреждений по доступным параметрам нет. Это НЕ подтверждение безопасности: на открытых плёсах проверяй волну, направление ветра и фактическую обстановку. Спасжилет обязателен.';}
-async function load(){try{$('status').textContent='Обновляем…';const [r,h]=await Promise.all([fetch(url+'&_='+Date.now(),{cache:'no-store'}),fetch('data/history.json?ts='+Date.now(),{cache:'no-store'}).catch(()=>null)]);if(!r.ok)throw Error('HTTP '+r.status);const d=await r.json();if(!d.hourly?.time?.length)throw Error('Пустой прогноз');hourly=d.hourly;history=h?.ok?await h.json():[];if(!Array.isArray(history))history=[];current(d.current);render();$('status').textContent='Обновлено '+new Date().toLocaleString('ru-RU',{timeZone:TZ})+' МСК';}catch(e){$('status').textContent='Не удалось загрузить: '+e.message;}}
+let lastWeatherTime=null;
+function updatedLabel(saved,origin){
+ const when=saved?new Date(saved):new Date();
+ const label=Number.isNaN(when.getTime())?'время неизвестно':when.toLocaleString('ru-RU',{timeZone:TZ,day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+ return (origin==='live'?'● Свежий прогноз':'◷ Сохранённый прогноз')+' · '+label+' МСК';
+}
+function applyData(d,origin){
+ if(!d?.hourly?.time?.length||!d.hourly.temperature_2m?.length)throw Error('Неполные погодные данные');
+ hourly=d.hourly;lastWeatherTime=d.saved_at||new Date().toISOString();
+ current(d.current);render();
+ $('status').textContent=updatedLabel(lastWeatherTime,origin);
+ document.dispatchEvent(new CustomEvent('seliger:weather',{detail:{origin,at:lastWeatherTime}}));
+}
+async function fetchTimed(resource,ms){
+ const ctl=new AbortController(),id=setTimeout(()=>ctl.abort(),ms);
+ try{const r=await fetch(resource,{cache:'no-store',signal:ctl.signal});if(!r.ok)throw Error('HTTP '+r.status);return await r.json()}
+ finally{clearTimeout(id)}
+}
+let loadingPromise=null;
+async function load(){
+ if(loadingPromise)return loadingPromise;
+ loadingPromise=(async()=>{
+  $('status').textContent='Загружаем прогноз…';
+  let displayed=false;const failures=[];
+  const historyPromise=fetchTimed('data/history.json?v='+Date.now(),6500).then(d=>{history=Array.isArray(d)?d:[];if(hourly)renderHistory(indices())}).catch(()=>{history=[]});
+  try{
+   const cached=await fetchTimed('data/latest.json?v='+Date.now(),7000);
+   applyData(cached,'cache');displayed=true;
+  }catch(e){failures.push('резервная копия: '+e.message)}
+  try{
+   const fresh=await fetchTimed(url+'&_='+Date.now(),10000);
+   applyData(fresh,'live');displayed=true;
+  }catch(e){failures.push('прямой запрос: '+e.message)}
+  await historyPromise;
+  if(!displayed)$('status').textContent='⚠ Нет погодных данных. '+failures.join('; ')+'. Нажми «Обновить».';
+  return displayed;
+ })().finally(()=>loadingPromise=null);
+ return loadingPromise;
+}
 const periodLabels={'6h':'±3 часа','24h':'24 часа','3d':'3 дня','7d':'7 дней'};
 document.querySelectorAll('[data-period]').forEach(b=>b.addEventListener('click',()=>{
  period=b.dataset.period;
