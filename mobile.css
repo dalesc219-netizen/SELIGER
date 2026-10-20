@@ -1,0 +1,35 @@
+/* Mobile-first shell for SELIGER */
+:root{color-scheme:dark}
+html{scroll-behavior:smooth}body{overflow-x:hidden}
+button,select,input,textarea{font:inherit}button{min-height:44px}
+main{padding-bottom:calc(90px + env(safe-area-inset-bottom))}
+.mobile-nav{position:fixed;z-index:100;bottom:0;left:0;right:0;display:flex;justify-content:space-around;gap:4px;background:#0d212bcc;border-top:1px solid #34505d;backdrop-filter:blur(18px);padding:7px 8px calc(7px + env(safe-area-inset-bottom))}
+.mobile-nav button{flex:1;border:0;border-radius:12px;padding:9px 3px 7px;background:transparent;color:#a6c3cf;display:flex;align-items:center;gap:4px;flex-direction:column;font-size:11px;min-width:0}
+.mobile-nav button.active{background:#21534a;color:#9af1d0}
+.mobile-nav .navicon{font-size:19px;line-height:1.2}
+[data-view].is-hidden{display:none!important}
+.weather-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:16px 0}
+.daycard{border:1px solid #2b4550;background:#112733;border-radius:13px;padding:12px;min-width:0}
+.daycard strong{display:block;font-size:13px}.daycard .daytemp{font-size:21px;font-weight:750;margin:9px 0 4px}
+.daycard small{display:block;color:#94b4c0;font-size:11px;line-height:1.6}
+.mobile-page{display:none}.mobile-page.active{display:block}
+.m-title{font-size:22px;letter-spacing:-.03em;margin:22px 0 14px}
+.m-box{background:#102530;border:1px solid #2a4651;border-radius:16px;padding:17px;margin:12px 0}
+.m-box p,.m-box li{font-size:13px;line-height:1.65;color:#b9ced6}
+.f-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.f-grid label{display:flex;flex-direction:column;gap:7px;font-size:12px;color:#aac3cb}
+.f-grid .full{grid-column:1/-1}
+.f-grid input,.f-grid textarea,.f-grid select{background:#081c27;border:1px solid #365667;border-radius:10px;min-width:0;width:100%;padding:12px;color:#fff;font-size:15px}
+.f-grid textarea{min-height:82px}
+.m-btn{background:#1d5b4d;border:1px solid #4cac91;border-radius:12px;color:#eafff7;font-weight:700;min-height:45px;padding:10px 15px}
+.m-btn.secondary{background:#122a37;border-color:#335562}
+.diarystack{display:grid;gap:9px}.log-card{border:1px solid #2d4a54;border-radius:13px;padding:13px;background:#112631}
+.log-card h3{margin:0 0 7px;font-size:15px}.log-card p{margin:3px 0;font-size:12px;color:#abc4cf}
+.log-card button{margin-top:8px}
+.mobile-page a{color:#86e4c5}
+.source-note{font-size:12px;color:#93b0ba;line-height:1.6}
+.infohead{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.offline-msg{color:#f0c98a;font-size:12px}
+@media(max-width:800px){main{padding:17px 12px calc(92px + env(safe-area-inset-bottom))}.brand{font-size:11px}.tag{font-size:10px;padding:6px 9px}.hero{font-size:29px;margin-top:15px}.controls{margin:16px 0 12px;gap:7px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.controls button,.controls select{white-space:nowrap;flex-shrink:0;font-size:12px;padding:9px 11px}.metric{border-radius:13px;padding:13px}.metric .val{font-size:24px}.metric small{font-size:11px}.metrics{gap:8px}.chart{height:240px}.panel.wide .chart{height:270px}.panel{padding:13px}.panel h2{font-size:15px}.pill{display:none}.weather-strip{gap:6px}.daycard{padding:8px}.daycard .daytemp{font-size:18px}}
+@media(max-width:390px){.weather-strip{grid-template-columns:1fr 1fr}.metrics{gap:6px}.metric .val{font-size:21px}.daycard{padding:9px}}
+@media(orientation:landscape) and (max-height:550px){main{padding:10px 15px 72px}.hero{font-size:25px}.mobile-nav{padding-top:3px}.mobile-nav button{flex-direction:row;justify-content:center;gap:6px;min-height:40px;font-size:12px}.mobile-nav .navicon{font-size:17px}.metrics{grid-template-columns:repeat(4,1fr)}.weather-strip{grid-template-columns:repeat(3,1fr)}.chart{height:260px}.panel.wide .chart{height:300px}.grid{grid-template-columns:1fr 1fr}}
+@media(min-width:801px){.mobile-nav{position:sticky;top:0;bottom:auto;max-width:650px;margin:15px auto;border:1px solid #34505d;border-radius:15px;padding:6px}.mobile-nav button{flex-direction:row;justify-content:center;font-size:13px}.mobile-page{max-width:860px;margin:auto}}
