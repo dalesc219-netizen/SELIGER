@@ -29,7 +29,7 @@ const assert = require('node:assert/strict');
    await page.locator('#periodSummary').waitFor({state:'attached'});
    assert.equal(await page.locator('#periodSummary').innerText(),'☰  Период: ±3 часа');
    await page.waitForFunction(()=>typeof window.Chart==='function'&&document.getElementById('pikeScore').textContent.includes('/100'));
-   for(const species of ['pike','zander','perch','peaceful'])assert.match(await page.locator('#'+species+'Score').innerText(),/\\d+\\/100/);
+   for(const species of ['pike','zander','perch','peaceful'])assert.match(await page.locator('#'+species+'Score').innerText(),new RegExp('[0-9]+/100'));
    await page.locator('[data-tab="charts"]').click();
    await page.locator('#periodSummary').click();
    await page.locator('[data-period="24h"]').click();
