@@ -128,3 +128,9 @@ main{padding-top:calc(var(--dock-top) + 72px)!important}
  [data-view].view-enter-forward,[data-view].view-enter-backward{animation:none}
  .mobile-nav button,.mobile-nav button.active .navicon{transition:none;transform:none}
 }
+
+/* Keep the time-range popover above animated chart canvases. */
+.controls[data-view="charts"]{position:relative;z-index:250;isolation:isolate}
+.controls[data-view="charts"] .period-menu[open]{z-index:300}
+.grid[data-view="charts"]{position:relative;z-index:0}
+.chart-jumps[data-view="charts"]{z-index:30}
