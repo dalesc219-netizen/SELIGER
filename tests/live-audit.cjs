@@ -1,6 +1,6 @@
 const {chromium,webkit} = require('playwright');
 const fs=require('fs');
-const target='https://dalesc219-netizen.github.io/SELIGER/?audit=20261020';
+const target='https://dalesc219-netizen.github.io/SELIGER/?audit='+Date.now();
 const checks=[];
 const issues=[];
 const out='audit-artifacts';
@@ -48,11 +48,11 @@ async function audit(engine,name,w,h){
  await browser.close();
 }
 (async()=>{
- for(const [engine,name] of [[chromium,'chromium'],[webkit,'webkit']]){
+ for(const [engine,name] of [[chromium,'chromium'],[webkit,'webkit']].filter(([,name])=>!process.env.AUDIT_ENGINE||process.env.AUDIT_ENGINE===name)){
   for(const [w,h] of [[402,874],[874,402]])await audit(engine,name,w,h);
  }
  const data={tested_at:new Date().toISOString(),url:target,checks,issues};
  fs.writeFileSync(out+'/report.json',JSON.stringify(data,null,2));
- console.log('SUMMARY',checks.filter(x=>x.ok).length+'/'+checks.length,'passed; failures',issues.length);
+ console.log('SUMMARY',process.env.AUDIT_ENGINE||'all',checks.filter(x=>x.ok).length+'/'+checks.length,'passed; failures',issues.length);
  if(issues.length){for(const x of issues)console.error('FAIL',x);process.exitCode=1}
 })().catch(e=>{console.error(e);process.exitCode=1});
