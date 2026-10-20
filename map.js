@@ -38,6 +38,15 @@ function initMap(){
  redraw();requestAnimationFrame(()=>map.invalidateSize());setTimeout(()=>map.invalidateSize(),350);
 }
 list.addEventListener('click',e=>{const btn=e.target.closest('[data-focus]');if(!btn)return;const r=records.find(x=>x.id===btn.dataset.focus);if(!r)return;if(map){map.setView([r.lat,r.lon],12,{animate:true});r._marker?.openPopup();mapEl.scrollIntoView({behavior:'smooth',block:'center'})}else{window.open('https://www.openstreetmap.org/?mlat='+r.lat+'&mlon='+r.lon+'#map=12/'+r.lat+'/'+r.lon,'_blank','noopener')}});
+root.querySelector('#toggleHistoricalDepths').addEventListener('click',()=>{
+ const holder=root.querySelector('#depthsFrameContainer'),frame=root.querySelector('#depthsFrame'),button=root.querySelector('#toggleHistoricalDepths');
+ holder.hidden=!holder.hidden;
+ button.textContent=holder.hidden?'Показать карту глубин':'Скрыть карту глубин';
+ if(!holder.hidden){
+  if(!frame.getAttribute('src'))frame.setAttribute('src','https://etomesto.com/map.php?map=3723&secret=187f65f&x=33.096397&y=57.156052');
+  holder.scrollIntoView({behavior:'smooth',block:'center'});
+ }
+});
 root.querySelector('#mapFilter').addEventListener('change',e=>{filter=e.target.value;redraw()});
 root.querySelector('#mapGps').addEventListener('click',()=>{
  const button=root.querySelector('#mapGps');if(!navigator.geolocation){status.textContent='На этом устройстве GPS недоступен';return}
