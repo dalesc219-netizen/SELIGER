@@ -85,8 +85,8 @@ const assert = require('node:assert/strict');
    }
 
    await page.locator('#mapFilter').selectOption('судак');
-   await page.waitForFunction(()=>document.querySelector('#seligerMap')?.dataset.regionPins==='2');
-   assert.equal(await page.locator('#seligerMap').getAttribute('data-region-pins'),'2','Fish map filter hides non-zander regions');
+   await page.waitForFunction(()=>document.querySelector('#seligerMap')?.dataset.regionPins==='7');
+   assert.equal(await page.locator('#seligerMap').getAttribute('data-region-pins'),'7','Fish map filter hides non-zander regions');
    await page.locator('#mapFilter').selectOption('all');
    await page.waitForFunction(()=>document.querySelector('#seligerMap')?.dataset.regionPins==='9');
    await page.locator('#researchSpecies').selectOption('судак');
