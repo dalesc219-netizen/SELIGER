@@ -21,7 +21,8 @@ function redraw(){
   const area=L.circle([r.lat,r.lon],{radius:r.radius_m,weight:1,color:'#80c9c3',opacity:.5,fillColor:'#69b9ae',fillOpacity:.06,dashArray:'4 6'}).addTo(markers);
   p.bindPopup('<strong>'+esc(r.name)+'</strong><p>'+esc(r.summary)+'</p><p>Не точка ловли. Условный район ~'+(r.radius_m/1000).toFixed(1)+' км, не измеренная GPS-точность.</p><a href="'+esc(r.source)+'" target="_blank" rel="noopener noreferrer">Исходное сообщение ↗</a>',{maxWidth:270});
   r._marker=p;
- }}
+ }mapEl.dataset.reportPins=String(selected.length);
+ }
 }
 function viewAll(){
  const coords=[...landmarks.map(x=>[x.lat,x.lon]),...records.map(x=>[x.lat,x.lon])];
@@ -37,6 +38,7 @@ function redrawLandmarks(){
   dot.bindPopup('<strong>'+esc(a.name)+'</strong><p>◆ Район исследования. Географическая метка: '+esc(a.label)+'. Это <b>НЕ точка поклёвки</b>.</p><p>'+esc(a.fish.join(', '))+'</p><a href="'+esc(a.source)+'" target="_blank" rel="noopener noreferrer">Источник географии ↗</a>');
   regionById.set(a.id,dot);
  }
+ mapEl.dataset.regionPins=String(regions.getLayers().length);
 }
 function fallback(){
  status.textContent='Библиотека карты не загрузилась. Ниже ссылки на географические ориентиры в OpenStreetMap.';
