@@ -61,6 +61,21 @@ root.querySelector('#mapGps').addEventListener('click',()=>{
  },e=>{button.disabled=false;status.textContent='GPS не получен: '+e.message},{enableHighAccuracy:true,timeout:12000,maximumAge:60000});
 });
 window.addEventListener('seliger:tab',e=>{if(e.detail?.id==='map')initMap();else if(map&&e.detail?.id==='charts')setTimeout(()=>map.invalidateSize(),150)});
+/* Confirmed base, conditional itinerary: textual advice only, never draw fake water routes. */
+(async()=>{const el=root.querySelector('#tripScenarioCards');if(!el)return;
+ try{
+  const r=await fetch('data/trip_scenarios.json?v='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);
+  const d=await r.json();el.replaceChildren();
+  for(const day of d.days||[]){
+   const article=document.createElement('article');article.className='trip-scenario-card';
+   const title=document.createElement('h4');title.textContent=day.heading;article.append(title);
+   for(const [label,value] of [['Основной район',day.primary],['Что проверить',day.target],['Тактика',day.strategy],['При ветре / резерв',day.reserve],['Достоверность',day.evidence]]){
+    const p=document.createElement('p');const strong=document.createElement('strong');strong.textContent=label+': ';p.append(strong,document.createTextNode(value));article.append(p);
+   }
+   el.append(article);
+  }
+ }catch(e){el.textContent='Не удалось загрузить сценарии. Используй эхолот и фактическую погоду при выборе маршрута.'}
+})();
 /* Research zones are intentionally separate from geographic report pins. */
 let researchAreas=[];
 const researchList=root.querySelector('#researchAreaCards'),researchCount=root.querySelector('#researchCount');
