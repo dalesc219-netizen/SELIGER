@@ -46,7 +46,7 @@ const assert = require('node:assert/strict');
    assert.ok(nowMarker.idx>0&&nowMarker.idx<nowMarker.length-1,'NOW indicator appears between past and future');
    assert.equal(nowMarker.length,7,'six-hour default includes -3, NOW and +3');
    const displayedLabels=await page.evaluate(()=>charts.tempChart.config.data.labels);
-   assert.ok(displayedLabels.some(x=>new RegExp('^[0-9]{2}:[0-9]{2}.test(x)),'Today uses HH:MM instead of numeric ISO');
+   assert.ok(displayedLabels.some(x=>/^[0-9]{2}:[0-9]{2}$/.test(x)),'Today uses HH:MM instead of numeric ISO');
    assert.ok(await page.locator('#rainChanceChart').count()===1,'Chance chart exists');
    const precipitation=await page.locator('#rainSummary').innerText();
    assert.ok(precipitation.includes('мм')&&precipitation.includes('%'),'Rain summary has mm and probability');
