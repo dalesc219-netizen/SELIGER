@@ -1,1 +1,142 @@
-[]
+[
+  {
+    "id": "post-22891726",
+    "date": null,
+    "page": 247,
+    "areas": [
+      "Неприе"
+    ],
+    "fish": [
+      "щука"
+    ],
+    "verified": false,
+    "has_exact_catch_coordinates": false,
+    "map_allowed": false,
+    "source": "https://www.rusfishing.ru/forum/threads/seliger.1485/page-247#js-post-22891726",
+    "note": "Автоматически найдено по словам; это не географическая точка и не проверенный улов."
+  },
+  {
+    "id": "post-22873870",
+    "date": null,
+    "page": 247,
+    "areas": [
+      "Полоновка",
+      "Турская",
+      "Заплавье"
+    ],
+    "fish": [
+      "судак",
+      "окунь",
+      "плотва"
+    ],
+    "verified": false,
+    "has_exact_catch_coordinates": false,
+    "map_allowed": false,
+    "source": "https://www.rusfishing.ru/forum/threads/seliger.1485/page-247#js-post-22873870",
+    "note": "Автоматически найдено по словам; это не географическая точка и не проверенный улов."
+  },
+  {
+    "id": "post-22849152",
+    "date": null,
+    "page": 246,
+    "areas": [
+      "Новые Ельцы"
+    ],
+    "fish": [
+      "лещ",
+      "плотва"
+    ],
+    "verified": false,
+    "has_exact_catch_coordinates": false,
+    "map_allowed": false,
+    "source": "https://www.rusfishing.ru/forum/threads/seliger.1485/page-246#js-post-22849152",
+    "note": "Автоматически найдено по словам; это не географическая точка и не проверенный улов."
+  },
+  {
+    "id": "post-22814504",
+    "date": null,
+    "page": 246,
+    "areas": [
+      "Берёзовский плёс"
+    ],
+    "fish": [
+      "щука",
+      "судак",
+      "окунь"
+    ],
+    "verified": false,
+    "has_exact_catch_coordinates": false,
+    "map_allowed": false,
+    "source": "https://www.rusfishing.ru/forum/threads/seliger.1485/page-246#js-post-22814504",
+    "note": "Автоматически найдено по словам; это не географическая точка и не проверенный улов."
+  },
+  {
+    "id": "post-22785450",
+    "date": null,
+    "page": 243,
+    "areas": [
+      "Осташков"
+    ],
+    "fish": [
+      "окунь",
+      "лещ"
+    ],
+    "verified": false,
+    "has_exact_catch_coordinates": false,
+    "map_allowed": false,
+    "source": "https://www.rusfishing.ru/forum/threads/seliger.1485/page-243#js-post-22785450",
+    "note": "Автоматически найдено по словам; это не географическая точка и не проверенный улов."
+  },
+  {
+    "id": "post-22770643",
+    "date": null,
+    "page": 241,
+    "areas": [
+      "Заплавье",
+      "Пески"
+    ],
+    "fish": [
+      "судак",
+      "окунь",
+      "лещ",
+      "язь"
+    ],
+    "verified": false,
+    "has_exact_catch_coordinates": false,
+    "map_allowed": false,
+    "source": "https://www.rusfishing.ru/forum/threads/seliger.1485/page-241#js-post-22770643",
+    "note": "Автоматически найдено по словам; это не географическая точка и не проверенный улов."
+  },
+  {
+    "id": "post-22303249",
+    "date": null,
+    "page": 230,
+    "areas": [
+      "Осташков"
+    ],
+    "fish": [
+      "щука"
+    ],
+    "verified": false,
+    "has_exact_catch_coordinates": false,
+    "map_allowed": false,
+    "source": "https://www.rusfishing.ru/forum/threads/seliger.1485/page-230#js-post-22303249",
+    "note": "Автоматически найдено по словам; это не географическая точка и не проверенный улов."
+  },
+  {
+    "id": "post-22208384",
+    "date": null,
+    "page": 230,
+    "areas": [
+      "Осташков"
+    ],
+    "fish": [
+      "лещ"
+    ],
+    "verified": false,
+    "has_exact_catch_coordinates": false,
+    "map_allowed": false,
+    "source": "https://www.rusfishing.ru/forum/threads/seliger.1485/page-230#js-post-22208384",
+    "note": "Автоматически найдено по словам; это не географическая точка и не проверенный улов."
+  }
+]
