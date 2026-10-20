@@ -38,8 +38,13 @@ async function audit(engine,name,w,h){
   record('Period selection 7d', (await page.locator('#periodSummary').innerText()).includes('7 дней'));
   await page.locator('#weatherDock button[data-chart="windChart"]').click();
   record('Weather dock opens chart',(await page.locator('#windChart').isVisible()));
-  await page.locator('.mobile-nav [data-tab="diary"]').click();
-  record('Diary navigation',(await page.locator('#catchForm').isVisible()));
+  await page.locator('.mobile-nav [data-tab="map"]').click();
+  await page.locator('#mapPage').waitFor({state:'visible',timeout:9000});
+  await page.locator('.map-report-card').first().waitFor({state:'visible',timeout:9000});
+  record('Map reports loaded', (await page.locator('.map-report-card').count())>=2);
+  await page.screenshot({path:out+'/'+name+'-'+(w<h?'portrait':'landscape')+'-map.png',fullPage:true});
+  await page.locator('.mobile-nav [data-tab="water"]').click();
+  record('Water monitoring',(await page.locator('#waterPage').isVisible()));
   await page.locator('.mobile-nav [data-tab="reports"]').click();
   record('Reports navigation',(await page.locator('#reportsPage').isVisible()));
   record('No JavaScript errors',errors.length===0,JSON.stringify(errors));
