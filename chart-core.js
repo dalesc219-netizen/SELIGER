@@ -26,6 +26,15 @@ class SeligerChart {
   let lo=Math.min(...numbers),hi=Math.max(...numbers);if(hi===lo){hi+=1;lo-=1}const pad=(hi-lo)*.12;lo-=pad;hi+=pad;
   if(this.config.type==='bar')lo=Math.min(0,lo);
   const X=i=>left+(labels.length<=1?pw/2:i*pw/(labels.length-1)),Y=v=>top+ph*(hi-v)/(hi-lo);
+  const markerIndex=this.config.options?.nowIndex;
+  const hasNow=this.config.options?.nowMarker&&Number.isInteger(markerIndex)&&markerIndex>=0&&markerIndex<labels.length;
+  const markerX=hasNow?X(markerIndex):null;
+  if(hasNow&&this.config.options?.markPast){
+   c.fillStyle='rgba(121,148,175,0.16)';
+   c.fillRect(left,top,Math.max(0,markerX-left),ph);
+   c.fillStyle='rgba(78,190,149,0.06)';
+   c.fillRect(markerX,top,Math.max(0,w-right-markerX),ph);
+  }
   c.strokeStyle=styles.line;c.lineWidth=1;c.fillStyle=styles.axis;c.textAlign='right';
   for(let j=0;j<=4;j++){const val=lo+(hi-lo)*j/4,y=Y(val);c.beginPath();c.moveTo(left,y);c.lineTo(w-right,y);c.stroke();c.fillText(Number(val.toFixed(Math.abs(hi-lo)<5?1:0)).toString(),left-7,y+4);}
   c.textAlign='center';const step=Math.max(1,Math.ceil(labels.length/(w<400?4:7)));
@@ -35,6 +44,24 @@ class SeligerChart {
    else{c.beginPath();let started=false;for(let i=0;i<values.length;i++){const v=values[i];if(v===null||v===undefined||!Number.isFinite(Number(v))){started=false;continue;}const x=X(i),y=Y(Number(v));if(!started){c.moveTo(x,y);started=true;}else c.lineTo(x,y);}c.stroke();}
   });
   let legendX=left;series.forEach(s=>{const name=String(s.label||'');c.font='11px system-ui,sans-serif';const tw=c.measureText(name).width;if(legendX+tw+26>w){return;}c.fillStyle=s.borderColor||s.backgroundColor||'#79deb9';c.fillRect(legendX,9,9,9);c.fillStyle=styles.text;c.textAlign='left';c.fillText(name,legendX+14,18);legendX+=tw+30;});
+  if(hasNow){
+   c.save();
+   c.setLineDash([5,4]);c.strokeStyle='#ffcd72';c.lineWidth=2;
+   c.beginPath();c.moveTo(markerX,top);c.lineTo(markerX,top+ph);c.stroke();
+   c.setLineDash([]);
+   c.fillStyle='#ffcd72';c.beginPath();c.arc(markerX,top+ph,4,0,Math.PI*2);c.fill();
+   c.font='bold 10px system-ui,sans-serif';
+   c.fillStyle='#ffd998';c.textAlign='center';
+   const lx=Math.max(left+30,Math.min(w-right-30,markerX));
+   c.fillText('СЕЙЧАС',lx,top+13);
+   if(this.config.options?.markPast&&w>260){
+    c.font='10px system-ui,sans-serif';c.fillStyle='#9faebf';
+    c.fillText('ПРОШЛОЕ',left+(markerX-left)/2,top+27);
+    c.fillStyle='#86dab9';
+    c.fillText('ПРОГНОЗ',markerX+(w-right-markerX)/2,top+27);
+   }
+   c.restore();
+  }
   if(this.touchX!==null){const idx=Math.max(0,Math.min(labels.length-1,Math.round((this.touchX-left)/pw*(labels.length-1))));const x=X(idx);c.setLineDash([3,3]);c.strokeStyle='#dcebf2';c.beginPath();c.moveTo(x,top);c.lineTo(x,top+ph);c.stroke();c.setLineDash([]);
    const lines=[String(labels[idx]),...series.map(s=>String(s.label||'')+': '+(s.data[idx]===null||s.data[idx]===undefined?'—':Number(s.data[idx]).toFixed(1)))];
    const tipW=Math.min(w-12,Math.max(...lines.map(t=>c.measureText(t).width))+22),tipH=lines.length*17+12,tx=Math.min(w-tipW-5,Math.max(5,x+8)),ty=top+5;
