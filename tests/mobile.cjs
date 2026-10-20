@@ -100,6 +100,18 @@ const assert = require('node:assert/strict');
    await page.locator('#tempChart').waitFor({state:'visible'});
    await page.waitForFunction(()=>{const c=document.getElementById('tempChart');return c.width>150&&c.getContext('2d').getImageData(0,0,c.width,c.height).data.some(x=>x>0)},{timeout:7000});
 
+   await page.waitForFunction(()=>navigator.serviceWorker&&navigator.serviceWorker.controller!==null,{timeout:12000}).catch(async()=>{
+     await page.reload({waitUntil:'domcontentloaded'});
+     await page.waitForFunction(()=>navigator.serviceWorker?.controller!==null,{timeout:12000});
+   });
+   await page.context().setOffline(true);
+   await page.reload({waitUntil:'domcontentloaded'});
+   await page.locator('.mobile-nav [data-tab="map"]').waitFor({state:'visible'});
+   await page.waitForFunction(()=>document.querySelector('#networkBadge')?.classList.contains('show'),{timeout:7000});
+   await page.locator('.mobile-nav [data-tab="map"]').click();
+   await page.locator('.map-report-card').first().waitFor({state:'visible',timeout:7000});
+   assert.equal(await page.locator('.map-report-card').count(),2,'Offline reports remain visible');
+   await page.context().setOffline(false);
    assert.deepEqual(errors.filter(x=>!/Chart is not defined|Failed to fetch/i.test(x)),[],scenario.name+' JavaScript errors');
    console.log('PASS',scenario.name);
    await page.close();
