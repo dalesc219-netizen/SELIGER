@@ -40,6 +40,32 @@ try:
     print('Hydropost',cm,stamp.isoformat())
 except Exception as exc:
     print('Hydropost unavailable, preserving dated previous reading:',exc)
-# Temperature has no confirmed public machine-readable 2026 current source; do not infer it from the air.
+# Secondary independent source: only accept temperature with an explicit recent date.
+# Public page can change HTML structure; any parser ambiguity is a non-fatal unavailable status.
+try:
+    from html.parser import HTMLParser
+    class Plain(HTMLParser):
+        def __init__(self):
+            super().__init__();self.parts=[]
+        def handle_data(self,v):
+            self.parts.append(v)
+    parser=Plain()
+    parser.feed(download('https://allrivers.info/gauge/seliger-ostashkov'))
+    cleaned=' '.join(' '.join(parser.parts).split())
+    date_match=re.search(r'Дата измерений\\s+(\\d{1,2})\\s+([а-яА-ЯёЁ]+)\\s+(20\\d{2})',cleaned,re.I)
+    temp_match=re.search(r'Температура воды\\s+(-?\\d+(?:[.,]\\d+)?)\\s*[°СC]',cleaned,re.I)
+    months={'января':1,'февраля':2,'марта':3,'апреля':4,'мая':5,'июня':6,'июля':7,'августа':8,'сентября':9,'октября':10,'ноября':11,'декабря':12}
+    if not date_match or not temp_match: raise ValueError('Missing explicit measurement date or water reading')
+    dd,mon,yyyy=date_match.groups()
+    when=datetime.datetime(int(yyyy),months[mon.lower()],int(dd),12,tzinfo=ZoneInfo('Europe/Moscow'))
+    val=float(temp_match.group(1).replace(',','.'))
+    if not -1<=val<=35:raise ValueError('Unrealistic lake water temperature')
+    prev=data.get('temperature') or {}
+    if not prev.get('measured_at') or when.isoformat()>=prev['measured_at']:
+        data['temperature']={'celsius':val,'measured_at':when.isoformat(),'source':'https://allrivers.info/gauge/seliger-ostashkov'}
+    print('Lake temperature',val,when.date())
+except Exception as exc:
+    print('Water temperature unavailable, preserving last dated measurement:',exc)
+
 data.setdefault('temperature',{'celsius':None,'measured_at':None})
 path.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
