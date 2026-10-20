@@ -2,7 +2,7 @@ const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
 (async()=>{
  const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
- const scenarios=[{name:'portrait',width:390,height:844},{name:'landscape',width:844,height:390}];
+ const scenarios=[{name:'iphone17pro-safari-usable-area',width:402,height:714},{name:'portrait',width:390,height:844},{name:'landscape',width:844,height:390}];
  try {
   for(const scenario of scenarios){
    const page=await browser.newPage({viewport:{width:scenario.width,height:scenario.height},deviceScaleFactor:3,isMobile:true,hasTouch:true});
@@ -41,6 +41,9 @@ const assert = require('node:assert/strict');
    await page.locator('#boatModeToggle').click();
    assert.ok(await page.locator('body.boat-mode').count(),'Boat mode enabled');
    assert.equal(await page.locator('#boatModeToggle').getAttribute('aria-pressed'),'true');
+   assert.equal(await page.locator('.fish p').first().evaluate(x=>getComputedStyle(x).display),'none','Boat mode hides nonessential fish explanations');
+   assert.equal(await page.locator('body').evaluate(x=>x.scrollWidth>innerWidth+2),false,'Boat mode has no horizontal overflow');
+
    await page.locator('#boatModeToggle').click();
    assert.equal(await page.locator('#boatModeToggle').getAttribute('aria-pressed'),'false');
    // Weather shortcuts duplicate unreachable top actions instead of moving the data cards.
