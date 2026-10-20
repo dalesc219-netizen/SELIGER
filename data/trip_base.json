@@ -1,5 +1,5 @@
 {
-  "name": "Твой Селигер",
+  "name": "Твой Селигер — Ладья",
   "area": "Бараново, Осташковский округ",
   "trip_dates": [
     "2026-10-22",
@@ -9,29 +9,15 @@
   ],
   "pier_confirmed_by_user": true,
   "site_is_multi_property": true,
-  "property_name": null,
-  "property_confirmation_needed": true,
-  "property_candidates": [
-    {
-      "name": "Ладья",
-      "address": "д. Бараново, 18 (заезд от д. Неприе)",
-      "launch_and_mooring": "documented_on_official_site",
-      "source": "https://tvoy-seliger.com/razmeshenie/ladya/"
-    },
-    {
-      "name": "Хижина",
-      "address": "д. Бараново",
-      "launch_and_mooring": "not_separately_verified",
-      "source": "https://tvoy-seliger.com/o-nas/"
-    }
-  ],
+  "property_name": "Ладья",
+  "property_confirmation_needed": false,
   "pier_gps": null,
   "village_reference": {
     "lat": 57.2133,
     "lon": 32.9981,
     "kind": "village_only_not_pier"
   },
-  "water_route_status": "cannot_calculate_until_property_and_pier_confirmed",
+  "water_route_status": "base_confirmed_exact_pier_coordinates_unverified",
   "source_urls": [
     "https://tvoy-seliger.com/",
     "https://tvoy-seliger.com/kontakty/",
@@ -40,5 +26,13 @@
   "warnings": [
     "Центр деревни не является координатой пирса.",
     "Охраняемые причалы Ладьи подтверждены официальным сайтом, но условия стоянки конкретной лодки уточняются отдельно."
+  ],
+  "property_confirmed_by_user": true,
+  "address": "Тверская область, Осташковский округ, деревня Бараново, 18",
+  "launch_supported_by_official_site": true,
+  "notes": [
+    "База «Ладья» подтверждена пользователем 20.10.2026.",
+    "Свой причал подтверждён пользователем; официальный сайт заявляет спуск водной техники.",
+    "Точка деревни — не координаты причала. Не рассчитывать водные маршруты по прямой."
   ]
 }
