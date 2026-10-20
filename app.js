@@ -75,6 +75,12 @@ function applyData(d,origin){
  $('status').textContent=updatedLabel(lastWeatherTime,origin);
  const age=forecastAgeHours(lastWeatherTime);
  $('status').dataset.freshness=origin==='live'?'live':age===null||age>12?'stale':age>6?'warning':'cached';
+ if(origin!=='live'&&(age===null||age>6)){
+   const safety=$('safety');
+   if(safety)safety.textContent=(age===null||age>12?
+     '⚠ Прогноз слишком старый для оценки безопасности. Перед выходом на Селигер проверь фактический ветер, волну и актуальный прогноз в другом источнике. Спасжилет обязателен.':
+     '⚠ Прогноз старше 6 часов. Условия могли измениться; перед выходом проверь свежие данные и фактическую волну. Спасжилет обязателен.');
+ }
  document.dispatchEvent(new CustomEvent('seliger:weather',{detail:{origin,at:lastWeatherTime,ageHours:age}}));
 }
 async function fetchTimed(resource,ms){
