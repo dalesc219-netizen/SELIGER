@@ -26,6 +26,10 @@ const main=document.querySelector('main');
 const controls=main.querySelector('.controls'),metrics=main.querySelector('.metrics'),grid=main.querySelector('.grid');
 const weather=document.createElement('div');weather.className='weather-strip';weather.id='daystrip';weather.setAttribute('aria-label','Ближайшие три дня');
 metrics.after(weather);
+const tripHeading=document.createElement('div');tripHeading.className='trip-heading';
+tripHeading.innerHTML='<strong>Поездка · 22–25 октября</strong><span id="tripSource">Загружаем прогноз…</span>';
+metrics.after(tripHeading);
+
 const analytical=main.querySelector('.species'),sectionTitle=main.querySelector('.section'),safety=main.querySelector('#safety'),foot=main.querySelector('.foot');
 const today=[main.querySelector('header'),main.querySelector('.top'),metrics,weather,sectionTitle,analytical,safety,foot];
 const chartSections=[controls,grid];
@@ -87,7 +91,35 @@ async function loadWater(){
 loadReports();loadWater();
 
 function dateKey(d){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Moscow',year:'numeric',month:'2-digit',day:'2-digit'}).format(d)}
-async function dayWeather(){try{const u='https://api.open-meteo.com/v1/forecast?latitude=57.146&longitude=33.108&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,wind_gusts_10m_max,sunrise,sunset&forecast_days=7&timezone=Europe%2FMoscow&wind_speed_unit=ms';const r=await fetch(u);if(!r.ok)throw Error('HTTP '+r.status);const d=(await r.json()).daily;if(!d?.time)throw Error('Нет данных');const fmt=t=>t?t.slice(11,16):'—';$('daystrip').innerHTML=d.time.slice(0,3).map((date,i)=>'<div class="daycard"><strong>'+escape(new Intl.DateTimeFormat('ru-RU',{weekday:'short',day:'numeric',month:'short'}).format(new Date(date+'T12:00:00+03:00')))+'</strong><div class="daytemp">'+Math.round(d.temperature_2m_max[i])+'° / '+Math.round(d.temperature_2m_min[i])+'°</div><small>Осадки '+Number(d.precipitation_sum[i]??0).toFixed(1)+' мм</small><small>Порывы до '+Math.round(d.wind_gusts_10m_max[i])+' м/с</small><small>☀ '+fmt(d.sunrise[i])+' · ☾ '+fmt(d.sunset[i])+'</small></div>').join('');}catch(e){$('daystrip').innerHTML='<div class="source-note">Сводка по дням сейчас недоступна. Почасовые графики могут работать отдельно.</div>'}}
+async function dayWeather(){
+ const targetDates=['2026-10-22','2026-10-23','2026-10-24','2026-10-25'];
+ const box=$('daystrip');
+ box.setAttribute('aria-label','Прогноз на поездку: 22–25 октября');
+ const fmt=t=>t?t.slice(11,16):'—';
+ try {
+  let daily=null,mode='сохранённый прогноз';
+  try {
+   const r=await fetch('data/latest.json?v='+Date.now(),{cache:'no-store'});
+   if(r.ok)daily=(await r.json()).daily;
+  }catch(e){}
+  try {
+   const u='https://api.open-meteo.com/v1/forecast?latitude=57.146&longitude=33.108&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,wind_gusts_10m_max,sunrise,sunset&forecast_days=7&timezone=Europe%2FMoscow&wind_speed_unit=ms';
+   const ctl=new AbortController(),timeout=setTimeout(()=>ctl.abort(),7000);
+   try {const r=await fetch(u,{cache:'no-store',signal:ctl.signal});if(r.ok){const d=(await r.json()).daily;if(d?.time?.length){daily=d;mode='свежий прогноз';}}}
+   finally{clearTimeout(timeout)}
+  }catch(e){}
+  if(!daily?.time)throw Error('Нет прогноза для дат поездки');
+  box.innerHTML=targetDates.map(date=>{
+   const i=daily.time.indexOf(date);
+   if(i<0)return '<div class="daycard"><strong>'+date.slice(8)+'.10</strong><small>Прогноз недоступен</small></div>';
+   const dayLabel=new Intl.DateTimeFormat('ru-RU',{timeZone:'Europe/Moscow',weekday:'short',day:'numeric',month:'short'}).format(new Date(date+'T12:00:00+03:00'));
+   const gust=daily.wind_gusts_10m_max?.[i],rain=daily.precipitation_sum?.[i];
+   return '<div class="daycard"><strong>'+escape(dayLabel)+'</strong><div class="daytemp">'+Math.round(daily.temperature_2m_max[i])+'° / '+Math.round(daily.temperature_2m_min[i])+'°</div><small>Осадки '+(Number.isFinite(rain)?rain.toFixed(1):'—')+' мм</small><small>Порывы до '+(Number.isFinite(gust)?Math.round(gust):'—')+' м/с</small><small>☀ '+fmt(daily.sunrise?.[i])+' · ☾ '+fmt(daily.sunset?.[i])+'</small></div>';
+  }).join('');
+  const modeLabel=document.getElementById('tripSource');
+  if(modeLabel)modeLabel.textContent='22–25 октября · '+mode;
+ }catch(e){box.innerHTML='<p class="source-note">Прогноз 22–25 октября пока недоступен. Проверь подключение или обнови страницу.</p>'}
+}
 dayWeather();
 window.addEventListener('orientationchange',()=>setTimeout(()=>{if(typeof charts!=='undefined')Object.values(charts).forEach(c=>c?.resize?.())},300));
 const refresh=$('refresh');refresh.addEventListener('click',dayWeather);
