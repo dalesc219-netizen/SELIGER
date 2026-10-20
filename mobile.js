@@ -63,7 +63,87 @@ mapPage.insertAdjacentHTML('beforeend','<section class="m-box research-section" 
 mapPage.insertAdjacentHTML('beforeend','<section class="m-box trip-scenarios" id="tripScenariosSection"><h3>Выезды от базы «Ладья» · 22–25 октября</h3><p class="source-note">База и свой причал подтверждены. Это сценарии исследования, не судоводительские маршруты: положение причала и безопасные проходы ещё не проверены.</p><div id="tripScenarioCards">Загружаем план…</div><p class="source-note"><a href="https://tvoy-seliger.com/razmeshenie/ladya/" target="_blank" rel="noopener noreferrer">Ладья: спуск водной техники и причалы ↗</a></p></section>');
 grid.after(mapPage);
 
+// Thumb-reach toolbar: one persistent, context-sensitive row just above bottom tabs.
+// Existing primary controls remain functional; proxies preserve a single source of truth.
+const thumbDock=document.createElement('aside');
+thumbDock.id='thumbDock';thumbDock.className='thumb-dock';thumbDock.setAttribute('aria-label','Управление одной рукой');
+thumbDock.innerHTML=`
+ <button type="button" id="boatModeToggle" class="boat-toggle" aria-pressed="false" aria-label="Включить режим На воде">⚓ На воде</button>
+ <div class="thumb-actions" data-thumb-tab="today">
+  <button type="button" id="thumbWind">➤ Ветер</button>
+  <button type="button" id="thumbTemperature">🌡 Темп.</button>
+  <button type="button" id="thumbRefresh" aria-label="Обновить погоду">↻</button>
+ </div>
+ <div class="thumb-actions" data-thumb-tab="charts">
+  <button type="button" data-thumb-period="6h" aria-pressed="true">6 ч</button>
+  <button type="button" data-thumb-period="24h" aria-pressed="false">24 ч</button>
+  <button type="button" data-thumb-period="3d" aria-pressed="false">3 д</button>
+  <button type="button" data-thumb-period="7d" aria-pressed="false">7 д</button>
+ </div>
+ <div class="thumb-actions" data-thumb-tab="map">
+  <label class="visually-hidden" for="thumbFish">Фильтр рыбы на карте</label>
+  <select id="thumbFish" aria-label="Рыба на карте">
+   <option value="all">Все рыбы</option>
+   <option value="щук">Щука</option>
+   <option value="судак">Судак</option>
+   <option value="окун">Окунь</option>
+   <option value="плотв">Плотва</option>
+  </select>
+  <button type="button" id="thumbGps" aria-label="Мой GPS на карте">⌖ GPS</button>
+  <button type="button" id="thumbAll" aria-label="Показать все районы на карте">Все</button>
+ </div>
+ <div class="thumb-actions" data-thumb-tab="water">
+  <button type="button" data-thumb-nav="today">◉ Погода</button>
+  <button type="button" data-thumb-nav="map">⌖ Карта</button>
+ </div>
+ <div class="thumb-actions" data-thumb-tab="reports">
+  <button type="button" data-thumb-nav="map">⌖ Карта</button>
+  <button type="button" data-thumb-nav="today">◉ Погода</button>
+ </div>`;
+document.body.append(thumbDock);
+const thumbZoom=document.createElement('div');
+thumbZoom.id='thumbZoom';thumbZoom.className='thumb-zoom';thumbZoom.setAttribute('aria-label','Масштаб карты');
+thumbZoom.innerHTML='<button type="button" data-map-zoom="in" aria-label="Приблизить карту">+</button><button type="button" data-map-zoom="out" aria-label="Отдалить карту">−</button>';
+document.body.append(thumbZoom);
+function setBoatMode(enabled){
+ document.body.classList.toggle('boat-mode',enabled);
+ const button=document.getElementById('boatModeToggle');
+ button.setAttribute('aria-pressed',String(enabled));
+ button.setAttribute('aria-label',enabled?'Выключить режим На воде':'Включить режим На воде');
+ button.textContent=enabled?'✓ На воде':'⚓ На воде';
+ try{localStorage.setItem('seliger-boat-mode',enabled?'1':'0')}catch(e){}
+}
+try{setBoatMode(localStorage.getItem('seliger-boat-mode')==='1')}catch(e){setBoatMode(false)}
+thumbDock.querySelector('#boatModeToggle').addEventListener('click',()=>setBoatMode(!document.body.classList.contains('boat-mode')));
+const topFish=mapPage.querySelector('#mapFilter'),thumbFish=thumbDock.querySelector('#thumbFish');
+thumbFish.addEventListener('change',()=>{
+ topFish.value=thumbFish.value;
+ topFish.dispatchEvent(new Event('change',{bubbles:true}));
+});
+topFish.addEventListener('change',()=>{thumbFish.value=topFish.value});
+thumbDock.querySelector('#thumbGps').addEventListener('click',()=>mapPage.querySelector('#mapGps').click());
+thumbDock.querySelector('#thumbAll').addEventListener('click',()=>mapPage.querySelector('#mapAll').click());
+thumbDock.querySelector('#thumbRefresh').addEventListener('click',()=>document.getElementById('refresh').click());
+thumbDock.querySelector('#thumbWind').addEventListener('click',()=>dock.querySelector('[data-chart="windChart"]').click());
+thumbDock.querySelector('#thumbTemperature').addEventListener('click',()=>dock.querySelector('[data-chart="tempChart"]').click());
+thumbDock.querySelectorAll('[data-thumb-nav]').forEach(b=>b.addEventListener('click',()=>tab(b.dataset.thumbNav)));
+thumbZoom.querySelectorAll('[data-map-zoom]').forEach(b=>b.addEventListener('click',()=>{
+ window.dispatchEvent(new CustomEvent('seliger:map-zoom',{detail:{direction:b.dataset.mapZoom}}));
+}));
+function syncThumbPeriod(selected){
+ thumbDock.querySelectorAll('[data-thumb-period]').forEach(b=>{
+  const pressed=b.dataset.thumbPeriod===selected;
+  b.classList.toggle('active',pressed);b.setAttribute('aria-pressed',String(pressed));
+ });
+}
+thumbDock.querySelectorAll('[data-thumb-period]').forEach(b=>b.addEventListener('click',()=>{
+ const original=document.querySelector('.period-options [data-period="'+b.dataset.thumbPeriod+'"]');
+ original?.click();syncThumbPeriod(b.dataset.thumbPeriod);
+}));
+document.querySelectorAll('.period-options [data-period]').forEach(b=>b.addEventListener('click',()=>syncThumbPeriod(b.dataset.period)));
+function thumbTab(id){thumbDock.dataset.tab=id;thumbZoom.dataset.tab=id;}
 
+// Keep thumb dock above the bottom navigation regardless of Safari safe area.
 let previousTab=null;
 const tabOrder=['today','charts','map','water','reports'];
 function tab(id){
@@ -78,6 +158,7 @@ function tab(id){
  for(const x of [reports,waterPage,mapPage])x.classList.toggle('active',x.dataset.view===id);
  nav.querySelectorAll('button').forEach(b=>{const on=b.dataset.tab===id;b.classList.toggle('active',on);b.setAttribute('aria-current',on?'page':'false')});
  previousTab=id;
+ thumbTab(id);
  try{window.history.replaceState(null,'','#'+id)}catch(e){}
  window.scrollTo({top:0,behavior:'instant'});
  if(id==='charts')requestAnimationFrame(()=>{if(typeof charts!=='undefined')Object.values(charts).forEach(c=>c?.resize?.())});
