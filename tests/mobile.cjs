@@ -21,7 +21,7 @@ const assert = require('node:assert/strict');
    await page.locator('#catchForm button[type=submit]').click();
    assert.ok((await page.locator('#diaryList').innerText()).includes('Тестовая точка'));
    await page.reload({waitUntil:'domcontentloaded'});
-   await page.locator('[data-tab="diary"]').click();
+   await page.locator('#diaryList').waitFor({state:'visible'});
    assert.ok((await page.locator('#diaryList').innerText()).includes('Тестовая точка'),'local diary persist');
    await page.locator('[data-tab="reports"]').click();
    assert.ok(await page.locator('a[href*="rusfishing.ru"]').count()>0);
