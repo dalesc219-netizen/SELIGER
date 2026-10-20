@@ -31,7 +31,7 @@ tripHeading.innerHTML='<strong>Поездка · 22–25 октября</strong>
 metrics.after(tripHeading);
 
 const analytical=main.querySelector('.species'),sectionTitle=main.querySelector('.section'),safety=main.querySelector('#safety'),foot=main.querySelector('.foot');
-const today=[main.querySelector('header'),main.querySelector('.top'),metrics,weather,sectionTitle,analytical,safety,foot];
+const today=[main.querySelector('header'),main.querySelector('.top'),metrics,tripHeading,weather,sectionTitle,analytical,safety,foot];
 const chartSections=[controls,grid];
 const chartJump=document.createElement('div');chartJump.className='chart-jumps';chartJump.setAttribute('aria-label','Быстрый переход к графикам');
 chartJump.innerHTML=[['tempChart','Температура'],['windChart','Ветер'],['rainChart','Осадки'],['pressureChart','Давление'],['biteChart','Клёв'],['historyChart','История']].map(([id,name])=>'<button type="button" data-chart="'+id+'">'+name+'</button>').join('');
