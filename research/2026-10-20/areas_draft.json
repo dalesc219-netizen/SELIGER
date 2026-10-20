@@ -1,0 +1,408 @@
+{
+  "meta": {
+    "created_on": "2026-10-20",
+    "scope": "Селигер, прогноз поездки 22–25.10.2026",
+    "status": "research_draft_unapproved",
+    "source_note": "Составлено на основе датированных публичных постов и проверенных страниц. Не исчерпывающий обход всех веток. Копирование первичного текста отсутствует.",
+    "author_counts_are_lower_bounds": true,
+    "note": "Географические ориентиры населённых пунктов не являются местами поклёвок. Точная геопозиция каждого района не подтверждена."
+  },
+  "verified_points": [],
+  "approximate_areas": [
+    {
+      "id": "sosnitsky",
+      "name": "Сосницкий плёс, включая акваторию Турской",
+      "species": [
+        "судак",
+        "щука",
+        "окунь"
+      ],
+      "latitude": null,
+      "longitude": null,
+      "location_accuracy": "B",
+      "uncertainty_radius_m": null,
+      "depth_range_m": [
+        4,
+        12
+      ],
+      "depth_qualifier": "Глубины из отдельных сообщений, НЕ гарантированный диапазон ловли во всей зоне",
+      "bottom_structure": [
+        "свал",
+        "пупки",
+        "участки твёрдого дна",
+        "полоса тростника у берега"
+      ],
+      "fishing_methods": [
+        "джиг",
+        "троллинг",
+        "вращающиеся блёсны"
+      ],
+      "effective_lures": [
+        "силикон 3–3,5 дюйма как отправная точка",
+        "воблеры глубинного троллинга"
+      ],
+      "observation_dates": [
+        "2021-10-04/2021-10-10",
+        "2021-10-29",
+        "2022-10-02",
+        "2022-10-05",
+        "2022-10-09",
+        "2023-10-09/2023-10-11",
+        "2024-10-05/2024-10-10",
+        "2025-10"
+      ],
+      "october_evidence_count": 9,
+      "independent_sources_count": 5,
+      "source_urls": [
+        "https://www.rusfishing.ru/forum/threads/sosnitskii-ples.8423/page-27",
+        "https://www.rusfishing.ru/forum/threads/sosnitskii-ples.8423/page-28",
+        "https://www.rusfishing.ru/forum/threads/sosnitskii-ples.8423/page-31",
+        "https://www.rusfishing.ru/forum/threads/sosnitskii-ples.8423/page-32",
+        "https://www.rusfishing.ru/forum/threads/rybolovnaya-baza-seliger24-na-ozere-seliger.575020/",
+        "https://www.rusfishing.ru/forum/threads/rybolovnaya-baza-seliger24-na-ozere-seliger.575020/page-2"
+      ],
+      "evidence_summary": "Наиболее повторяемые независимые свидетельства поздней осени; цифры 4–12 м — диапазон именно изученных отчётов по различным точкам плёса, не карта глубин.",
+      "negative_reports": "Судак не найден при хорошем окуне 05.10.2022; неудачный выезд в начале октября 2023; 2025 серия от рекламодателя.",
+      "confidence": "умеренная-высокая",
+      "limitations": "Без опубликованной подтверждённой точной точки ловли координаты intentionally null. Судак не найден при хорошем окуне 05.10.2022; неудачный выезд в начале октября 2023; 2025 серия от рекламодателя."
+    },
+    {
+      "id": "gushcha",
+      "name": "Гущинская лука и акватория у Гущи",
+      "species": [
+        "судак",
+        "налим"
+      ],
+      "latitude": null,
+      "longitude": null,
+      "location_accuracy": "B",
+      "uncertainty_radius_m": null,
+      "depth_range_m": [
+        5,
+        12
+      ],
+      "depth_qualifier": "Глубины из отдельных сообщений, НЕ гарантированный диапазон ловли во всей зоне",
+      "bottom_structure": [
+        "смена глубины от постановки к забросу",
+        "свал — предположение, не изобата"
+      ],
+      "fishing_methods": [
+        "джиг"
+      ],
+      "effective_lures": [
+        "Avaruna 95, белый силикон, голова 40 г в эпизоде 2022 (не универсальная рекомендация)"
+      ],
+      "observation_dates": [
+        "2022-10-13/2022-10-16"
+      ],
+      "october_evidence_count": 1,
+      "independent_sources_count": 1,
+      "source_urls": [
+        "https://www.rusfishing.ru/forum/threads/seliger.1485/page-198"
+      ],
+      "evidence_summary": "Один, но очень конкретный октябрьский отчёт с ответом автора на вопрос о глубине.",
+      "negative_reports": "Большая часть поездки без поклёвок; данных независимых авторов по октябрю недостаточно.",
+      "confidence": "умеренная",
+      "limitations": "Без опубликованной подтверждённой точной точки ловли координаты intentionally null. Большая часть поездки без поклёвок; данных независимых авторов по октябрю недостаточно."
+    },
+    {
+      "id": "polonovka",
+      "name": "Полоновка: протока между Заплавьем и Турской",
+      "species": [
+        "щука",
+        "судак",
+        "окунь",
+        "плотва",
+        "язь"
+      ],
+      "latitude": null,
+      "longitude": null,
+      "location_accuracy": "B",
+      "uncertainty_radius_m": null,
+      "depth_range_m": null,
+      "depth_qualifier": null,
+      "bottom_structure": [
+        "протока",
+        "переход от протоки к плёсу — гипотеза"
+      ],
+      "fishing_methods": [
+        "джиг",
+        "троллинг",
+        "рыбалка на мирную рыбу"
+      ],
+      "effective_lures": [],
+      "observation_dates": [
+        "2026-08-02/2026-08-10",
+        "2023-06-22"
+      ],
+      "october_evidence_count": 0,
+      "independent_sources_count": 2,
+      "source_urls": [
+        "https://www.rusfishing.ru/forum/threads/seliger.1485/page-247",
+        "https://www.rusfishing.ru/forum/threads/seliger.1485/page-201"
+      ],
+      "evidence_summary": "Свежий летний отчёт 2026 показывает присутствие нескольких видов; для октября рекомендация экспериментальная.",
+      "negative_reports": "Ни одного подтверждённого октябрьского улова в строго локализованной точке.",
+      "confidence": "низкая",
+      "limitations": "Без опубликованной подтверждённой точной точки ловли координаты intentionally null. Ни одного подтверждённого октябрьского улова в строго локализованной точке."
+    },
+    {
+      "id": "berezovsky",
+      "name": "Берёзовский плёс",
+      "species": [
+        "щука",
+        "окунь",
+        "судак"
+      ],
+      "latitude": null,
+      "longitude": null,
+      "location_accuracy": "C",
+      "uncertainty_radius_m": null,
+      "depth_range_m": null,
+      "depth_qualifier": null,
+      "bottom_structure": [
+        "камышовые границы",
+        "подводные пупки (без координат)"
+      ],
+      "fishing_methods": [
+        "джиг",
+        "поппер",
+        "вращающиеся блёсны"
+      ],
+      "effective_lures": [],
+      "observation_dates": [
+        "2026-07-27/2026-08-08"
+      ],
+      "october_evidence_count": 0,
+      "independent_sources_count": 1,
+      "source_urls": [
+        "https://www.rusfishing.ru/forum/threads/seliger.1485/page-246"
+      ],
+      "evidence_summary": "Свежий отчёт 2026: щука и окунь; судак на эхолоте без результативной ловли.",
+      "negative_reports": "Август вместо октября, далеко от Осташкова, ветер способен сделать ловлю неудобной.",
+      "confidence": "низкая",
+      "limitations": "Без опубликованной подтверждённой точной точки ловли координаты intentionally null. Август вместо октября, далеко от Осташкова, ветер способен сделать ловлю неудобной."
+    },
+    {
+      "id": "zaplavye",
+      "name": "Заплавье и прилегающая Полоновка",
+      "species": [
+        "окунь",
+        "щука",
+        "судак"
+      ],
+      "latitude": null,
+      "longitude": null,
+      "location_accuracy": "B",
+      "uncertainty_radius_m": null,
+      "depth_range_m": null,
+      "depth_qualifier": null,
+      "bottom_structure": [
+        "береговая растительность",
+        "соединительные протоки"
+      ],
+      "fishing_methods": [
+        "лёгкий спиннинг",
+        "поплавочная ловля"
+      ],
+      "effective_lures": [],
+      "observation_dates": [
+        "2018-10-07/2018-10-10",
+        "2024-10"
+      ],
+      "october_evidence_count": 2,
+      "independent_sources_count": 2,
+      "source_urls": [
+        "https://www.rusfishing.ru/forum/threads/zaplavye.28271/page-24",
+        "https://www.rusfishing.ru/forum/threads/shchuka-na-oz-seliger.298390/page-7"
+      ],
+      "evidence_summary": "Октябрьские отрицательные отчёты плюс отдельные поимки мелкого окуня у берега; перспективность судака и крупной щуки не подтверждена.",
+      "negative_reports": "По хищнику в 2018 неудачно, в октябре 2024 трофеев не было.",
+      "confidence": "низкая",
+      "limitations": "Без опубликованной подтверждённой точной точки ловли координаты intentionally null. По хищнику в 2018 неудачно, в октябре 2024 трофеев не было."
+    },
+    {
+      "id": "krovotynsky",
+      "name": "Кровотынский плёс",
+      "species": [
+        "окунь",
+        "судак",
+        "щука"
+      ],
+      "latitude": null,
+      "longitude": null,
+      "location_accuracy": "C",
+      "uncertainty_radius_m": null,
+      "depth_range_m": null,
+      "depth_qualifier": null,
+      "bottom_structure": [
+        "пелагическая кормовая рыба над глубиной"
+      ],
+      "fishing_methods": [
+        "джиг",
+        "пелагический поиск эхолотом"
+      ],
+      "effective_lures": [],
+      "observation_dates": [
+        "2023-06-22"
+      ],
+      "october_evidence_count": 0,
+      "independent_sources_count": 1,
+      "source_urls": [
+        "https://www.rusfishing.ru/forum/threads/seliger.1485/page-201"
+      ],
+      "evidence_summary": "Отчёт показывает охоту окуня над 13 м в июне, не осенью.",
+      "negative_reports": "Судак и щука в этом отчёте не найдены, приманки не подобраны.",
+      "confidence": "низкая",
+      "limitations": "Без опубликованной подтверждённой точной точки ловли координаты intentionally null. Судак и щука в этом отчёте не найдены, приманки не подобраны."
+    },
+    {
+      "id": "novye-eltsy",
+      "name": "Новые Ельцы",
+      "species": [
+        "плотва",
+        "подлещик"
+      ],
+      "latitude": null,
+      "longitude": null,
+      "location_accuracy": "B",
+      "uncertainty_radius_m": null,
+      "depth_range_m": null,
+      "depth_qualifier": null,
+      "bottom_structure": [
+        "береговая зона неизвестна"
+      ],
+      "fishing_methods": [
+        "пикер"
+      ],
+      "effective_lures": [
+        "опарыш"
+      ],
+      "observation_dates": [
+        "2026-08-22"
+      ],
+      "october_evidence_count": 0,
+      "independent_sources_count": 1,
+      "source_urls": [
+        "https://www.rusfishing.ru/forum/threads/seliger.1485/page-246"
+      ],
+      "evidence_summary": "Проверенный августовский улов мирной рыбы; полезно как резерв, но не октябрьская статистика.",
+      "negative_reports": "Нет точной точки и данных поздней осени.",
+      "confidence": "низкая",
+      "limitations": "Без опубликованной подтверждённой точной точки ловли координаты intentionally null. Нет точной точки и данных поздней осени."
+    },
+    {
+      "id": "ostashkov",
+      "name": "Ближайшая акватория Осташкова",
+      "species": [
+        "плотва",
+        "подлещик",
+        "густера",
+        "окунь"
+      ],
+      "latitude": null,
+      "longitude": null,
+      "location_accuracy": "C",
+      "uncertainty_radius_m": null,
+      "depth_range_m": null,
+      "depth_qualifier": null,
+      "bottom_structure": [
+        "мелководные участки прибрежной зоны (проверить эхолотом)"
+      ],
+      "fishing_methods": [
+        "фидер"
+      ],
+      "effective_lures": [
+        "червь"
+      ],
+      "observation_dates": [
+        "2024-06-18"
+      ],
+      "october_evidence_count": 0,
+      "independent_sources_count": 1,
+      "source_urls": [
+        "https://www.rusfishing.ru/forum/threads/seliger-u-ostashkova.5027/page-14"
+      ],
+      "evidence_summary": "Летний отчёт по мирной рыбе, может быть резервом только по логистике.",
+      "negative_reports": "Нет проверенных октябрьских результатов и точных районов.",
+      "confidence": "очень низкая",
+      "limitations": "Без опубликованной подтверждённой точной точки ловли координаты intentionally null. Нет проверенных октябрьских результатов и точных районов."
+    },
+    {
+      "id": "zadubye",
+      "name": "Задубье и прилегающая акватория",
+      "species": [
+        "окунь",
+        "щука",
+        "судак"
+      ],
+      "latitude": null,
+      "longitude": null,
+      "location_accuracy": "C",
+      "uncertainty_radius_m": null,
+      "depth_range_m": null,
+      "depth_qualifier": null,
+      "bottom_structure": [
+        "плёс, переходы глубин неизвестны"
+      ],
+      "fishing_methods": [
+        "поиск эхолотом"
+      ],
+      "effective_lures": [],
+      "observation_dates": [],
+      "october_evidence_count": 0,
+      "independent_sources_count": 0,
+      "source_urls": [],
+      "evidence_summary": "Существуют общие обсуждения в отдельной ветке Задубье, но в данной выборке не найден подтверждённый октябрьский улов с геопривязкой.",
+      "negative_reports": "В рейтинги не включать как доказанное продуктивное место.",
+      "confidence": "не подтверждена",
+      "limitations": "Без опубликованной подтверждённой точной точки ловли координаты intentionally null. В рейтинги не включать как доказанное продуктивное место."
+    }
+  ],
+  "unlocated_reports": [
+    {
+      "id": "unlocated-oct2017",
+      "name": "Щука на Селигере, район неизвестен",
+      "observed_at": "2017-10",
+      "source_url": "https://www.rusfishing.ru/forum/threads/shchuka-na-oz-seliger.298390/",
+      "type": "contradictory_accounts",
+      "note": "Разные очевидцы расходятся в оценке ловли на глубине против тростника."
+    },
+    {
+      "id": "base-post-2025-photo",
+      "name": "Рекламная серия Селигер24",
+      "observed_at": null,
+      "source_url": "https://www.rusfishing.ru/forum/threads/rybolovnaya-baza-seliger24-na-ozere-seliger.575020/",
+      "type": "commercial_date_conflict",
+      "note": "Для одного фото имя файла содержит 2022 при заявленной датировке 2025. Не использовать как подтверждённый улов 2025-10-28."
+    }
+  ],
+  "rankings": {
+    "судак": [
+      "sosnitsky",
+      "gushcha",
+      "polonovka",
+      "berezovsky"
+    ],
+    "щука": [
+      "sosnitsky",
+      "berezovsky",
+      "polonovka",
+      "zaplavye"
+    ],
+    "окунь": [
+      "sosnitsky",
+      "berezovsky",
+      "krovotynsky",
+      "zaplavye",
+      "polonovka"
+    ],
+    "мирная рыба": [
+      "novye-eltsy",
+      "polonovka",
+      "ostashkov"
+    ]
+  },
+  "evidence_ledger_file": "seliger_evidence_ledger_2026-10-20.csv",
+  "map_integration_status": "not_published_needs_user_approval"
+}
