@@ -43,11 +43,24 @@ reports.innerHTML='<h2 class="m-title">Селигер · рыболовный р
 grid.after(diary,reports);
 const timeLocal=()=>{const d=new Date(),pad=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes())};
 diary.querySelector('[name=date]').value=timeLocal();
-function tab(id){for(const el of document.querySelectorAll('[data-view]'))el.classList.toggle('is-hidden',el.dataset.view!==id);
-for(const x of [diary,reports])x.classList.toggle('active',x.dataset.view===id);
-nav.querySelectorAll('button').forEach(b=>{const on=b.dataset.tab===id;b.classList.toggle('active',on);b.setAttribute('aria-current',on?'page':'false')});
-try{window.history.replaceState(null,'','#'+id)}catch(e){}
-window.scrollTo({top:0,behavior:'instant'});if(id==='charts')requestAnimationFrame(()=>{if(typeof charts!=='undefined')Object.values(charts).forEach(c=>c?.resize?.())});}
+let previousTab=null;
+const tabOrder=['today','charts','diary','reports'];
+function tab(id){
+ const entering=previousTab!==null&&previousTab!==id;
+ const direction=tabOrder.indexOf(id)>=tabOrder.indexOf(previousTab)?'forward':'backward';
+ for(const el of document.querySelectorAll('[data-view]')){
+  const visible=el.dataset.view===id;
+  el.classList.toggle('is-hidden',!visible);
+  el.classList.remove('view-enter-forward','view-enter-backward');
+  if(visible&&entering){void el.offsetWidth;el.classList.add('view-enter-'+direction);}
+ }
+ for(const x of [diary,reports])x.classList.toggle('active',x.dataset.view===id);
+ nav.querySelectorAll('button').forEach(b=>{const on=b.dataset.tab===id;b.classList.toggle('active',on);b.setAttribute('aria-current',on?'page':'false')});
+ previousTab=id;
+ try{window.history.replaceState(null,'','#'+id)}catch(e){}
+ window.scrollTo({top:0,behavior:'instant'});
+ if(id==='charts')requestAnimationFrame(()=>{if(typeof charts!=='undefined')Object.values(charts).forEach(c=>c?.resize?.())});
+}
 nav.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>tab(b.dataset.tab)));
 tab(['today','charts','diary','reports'].includes(location.hash.slice(1))?location.hash.slice(1):'today');
 const storeKey='seliger_diary_v1';
