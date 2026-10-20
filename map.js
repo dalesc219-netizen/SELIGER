@@ -52,6 +52,13 @@ root.querySelector('#mapGps').addEventListener('click',()=>{
  },e=>{button.disabled=false;status.textContent='GPS не получен: '+e.message},{enableHighAccuracy:true,timeout:12000,maximumAge:60000});
 });
 window.addEventListener('seliger:tab',e=>{if(e.detail?.id==='map')initMap();else if(map&&e.detail?.id==='charts')setTimeout(()=>map.invalidateSize(),150)});
+(async()=>{try{
+ const response=await fetch('data/forum_scan_state.json?ts='+Date.now(),{cache:'no-store'});
+ if(!response.ok)return;const d=await response.json();
+ const el=document.getElementById('forumCoverage');
+ if(!el)return;
+ el.textContent='Проверка форума: '+(d.pages_completed||0)+' из '+(d.estimated_total_pages||248)+' страниц основной темы · '+(d.candidate_count||0)+' сообщений на ручную проверку. '+(d.status==='blocked'||d.status==='robots_disallow'?'Автоматический доступ ограничен.':d.status==='complete'?'Архив индексирован.':'Разбор продолжается; найденные упоминания НЕ становятся GPS-метками автоматически.');
+}catch(e){}})();
 (async()=>{
  try{const response=await fetch('data/map_points.json?ts='+Date.now(),{cache:'no-store'});if(!response.ok)throw Error('HTTP '+response.status);const d=await response.json();
  records=(d.points||[]).filter(r=>Number.isFinite(r.lat)&&Number.isFinite(r.lon)&&Array.isArray(r.fish)&&r.source);
