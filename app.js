@@ -128,6 +128,7 @@ function resumeForecast(){
 document.addEventListener('visibilitychange',resumeForecast);
 window.addEventListener('pageshow',event=>{if(event.persisted)resumeForecast()});
 window.addEventListener('focus',resumeForecast);
+document.addEventListener('seliger:boat-mode',()=>Object.values(charts).forEach(chart=>chart?.draw?.()));
 const periodLabels={'6h':'6 часов','24h':'24 часа','3d':'3 дня','7d':'7 дней'};
 document.querySelectorAll('[data-period]').forEach(b=>b.addEventListener('click',()=>{
  period=b.dataset.period;
