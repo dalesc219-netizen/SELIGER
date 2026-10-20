@@ -2,7 +2,7 @@
 (()=>{'use strict';
 const root=document.getElementById('mapPage');if(!root)return;
 const mapEl=document.getElementById('seligerMap'),list=document.getElementById('mapReports'),count=document.getElementById('mapCount'),status=document.getElementById('mapStatus');
-let map=null,markers=null,records=[],filter='all',userMarker=null;
+let map=null,markers=null,regions=null,records=[],landmarks=[],filter='all',userMarker=null;const regionById=new Map();
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function visible(r){return filter==='all'||r.fish.some(f=>f.toLowerCase().includes(filter))}
 function makeCard(r){
@@ -23,7 +23,23 @@ function redraw(){
   r._marker=p;
  }}
 }
+function viewAll(){
+ const coords=[...landmarks.map(x=>[x.lat,x.lon]),...records.map(x=>[x.lat,x.lon])];
+ if(map&&coords.length){map.fitBounds(L.latLngBounds(coords).pad(.13),{maxZoom:11,animate:true});map.invalidateSize()}
+ else if(map){map.setView([57.28,33],10)}
+}
+function redrawLandmarks(){
+ if(!map||!regions)return;
+ regions.clearLayers();regionById.clear();
+ for(const a of landmarks){
+  const dot=L.circleMarker([a.lat,a.lon],{radius:10,weight:3,color:'#fbdb91',fillColor:'#674e92',fillOpacity:.9}).addTo(regions);
+  dot.bindTooltip(a.name,{direction:'top',offset:[0,-10]});
+  dot.bindPopup('<strong>'+esc(a.name)+'</strong><p>◆ Район исследования. Географическая метка: '+esc(a.label)+'. Это <b>НЕ точка поклёвки</b>.</p><p>'+esc(a.fish.join(', '))+'</p><a href="'+esc(a.source)+'" target="_blank" rel="noopener noreferrer">Источник географии ↗</a>');
+  regionById.set(a.id,dot);
+ }
+}
 function fallback(){
+
  status.textContent='Для интерактивной карты требуется подключение к сети. Список ориентиров и ссылки доступны ниже.';
  mapEl.innerHTML='<iframe title="Карта Селигера OpenStreetMap" src="https://www.openstreetmap.org/export/embed.html?bbox=32.55%2C57.05%2C33.45%2C57.48&layer=mapnik" loading="lazy" referrerpolicy="no-referrer" style="width:100%;height:100%;border:0"></iframe>';
 }
@@ -34,9 +50,11 @@ function initMap(){
  L.control.zoom({position:'bottomright'}).addTo(map);
  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:17,attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
  markers=L.layerGroup().addTo(map);
+ regions=L.layerGroup().addTo(map);
  status.textContent='Карта: OpenStreetMap · кружки обозначают район, а не место поклёвки.';
- redraw();requestAnimationFrame(()=>map.invalidateSize());setTimeout(()=>map.invalidateSize(),350);
+ redraw();redrawLandmarks();requestAnimationFrame(()=>{map.invalidateSize();viewAll()});setTimeout(()=>{map.invalidateSize();viewAll()},350);
 }
+root.querySelector('#mapAll').addEventListener('click',()=>{if(map){viewAll()}else{const u='https://www.openstreetmap.org/#map=10/57.28/33.01';window.open(u,'_blank','noopener')}});
 list.addEventListener('click',e=>{const btn=e.target.closest('[data-focus]');if(!btn)return;const r=records.find(x=>x.id===btn.dataset.focus);if(!r)return;if(map){map.setView([r.lat,r.lon],12,{animate:true});r._marker?.openPopup();mapEl.scrollIntoView({behavior:'smooth',block:'center'})}else{window.open('https://www.openstreetmap.org/?mlat='+r.lat+'&mlon='+r.lon+'#map=12/'+r.lat+'/'+r.lon,'_blank','noopener')}});
 root.querySelector('#toggleHistoricalDepths').addEventListener('click',()=>{
  const holder=root.querySelector('#depthsFrameContainer'),frame=root.querySelector('#depthsFrame'),button=root.querySelector('#toggleHistoricalDepths');
@@ -76,6 +94,14 @@ window.addEventListener('seliger:tab',e=>{if(e.detail?.id==='map')initMap();else
   }
  }catch(e){el.textContent='Не удалось загрузить сценарии. Используй эхолот и фактическую погоду при выборе маршрута.'}
 })();
+(async()=>{try{
+ const r=await fetch('data/area_anchors.json?v='+Date.now(),{cache:'no-store'});
+ if(!r.ok)throw Error('HTTP '+r.status);const d=await r.json();
+ landmarks=(d.anchors||[]).filter(a=>Number.isFinite(a.lat)&&Number.isFinite(a.lon)).map(a=>({...a,name:a.label.split(' · ')[0],fish:[]}));
+ if(map){redrawLandmarks();viewAll()}
+ const m=document.getElementById('mapLegend');if(m)m.textContent='● Отчёты: '+records.length+' · ◆ Районы: '+landmarks.length+' · не точки ловли';
+ researchDraw();
+}catch(e){status.textContent='Районы не загружены: '+e.message;}})();
 /* Research zones are intentionally separate from geographic report pins. */
 let researchAreas=[];
 const researchList=root.querySelector('#researchAreaCards'),researchCount=root.querySelector('#researchCount');
@@ -96,11 +122,12 @@ function researchDraw(){
   const depth=r.depth_range_m?.length===2?'Из отдельных отчётов: '+r.depth_range_m.join('–')+' м':'Подтверждённых глубин нет';
   const links=(r.source_urls||[]).slice(0,6).map((u,i)=>'<a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">Источник '+(i+1)+' ↗</a>').join(' ');
   article.innerHTML='<div class="report-head"><strong>'+esc(r.name)+'</strong><span class="research-accuracy">класс '+esc(r.location_accuracy)+'</span></div><p class="research-evidence">'+esc(dates)+' · авторских источников: '+Number(r.independent_sources_count||0)+'</p><p>Рыба: '+r.species.map(esc).join(', ')+'</p><p>'+esc(depth)+'</p><p>'+esc(r.evidence_summary)+'</p><p class="research-negative"><b>Ограничения:</b> '+esc(r.negative_reports||r.limitations)+'</p><div class="research-links">'+links+'</div><p class="source-note">Точка поимки не установлена — GPS не публикуем.</p>';
+  if(regionById.has(r.id)){const locate=document.createElement('button');locate.type='button';locate.className='research-locate';locate.textContent='⌖ Показать район на карте';locate.addEventListener('click',()=>{const a=landmarks.find(x=>x.id===r.id);if(!a)return;if(map){map.setView([a.lat,a.lon],12);regionById.get(r.id)?.openPopup();mapEl.scrollIntoView({behavior:'smooth',block:'center'})}else window.open('https://www.openstreetmap.org/?mlat='+a.lat+'&mlon='+a.lon+'#map=12/'+a.lat+'/'+a.lon,'_blank','noopener')});article.append(locate)}
   researchList.append(article);
  }
 }
 for(const id of ['researchSpecies','researchSeason'])root.querySelector('#'+id).addEventListener('change',researchDraw);
-(async()=>{try{const r=await fetch('data/research_areas.json?v='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const d=await r.json();researchAreas=(d.areas||[]).filter(x=>x&&x.latitude===null&&x.longitude===null&&Array.isArray(x.species));researchDraw()}catch(e){researchCount.textContent='Данные недоступны';researchList.textContent='Не удалось загрузить исследовательские районы.'}})();
+(async()=>{try{const r=await fetch('data/research_areas.json?v='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const d=await r.json();researchAreas=(d.areas||[]).filter(x=>x&&x.latitude===null&&x.longitude===null&&Array.isArray(x.species));researchDraw();redrawLandmarks();if(map)viewAll()}catch(e){researchCount.textContent='Данные недоступны';researchList.textContent='Не удалось загрузить исследовательские районы.'}})();
 (async()=>{try{
  const response=await fetch('data/forum_scan_state.json?ts='+Date.now(),{cache:'no-store'});
  if(!response.ok)return;const d=await response.json();
@@ -110,7 +137,7 @@ for(const id of ['researchSpecies','researchSeason'])root.querySelector('#'+id).
 }catch(e){}})();
 (async()=>{
  try{const response=await fetch('data/map_points.json?ts='+Date.now(),{cache:'no-store'});if(!response.ok)throw Error('HTTP '+response.status);const d=await response.json();
- records=(d.points||[]).filter(r=>Number.isFinite(r.lat)&&Number.isFinite(r.lon)&&Array.isArray(r.fish)&&r.source);
+ records=(d.points||[]).filter(r=>Number.isFinite(r.lat)&&Number.isFinite(r.lon)&&Array.isArray(r.fish)&&r.source); const lg=document.getElementById('mapLegend');if(lg)lg.textContent='● Отчёты: '+records.length+' · ◆ Районы: '+landmarks.length+' · не точки ловли';
  const non=document.getElementById('unlocatedReports');if(non)non.textContent=(d.unlocated_references||[]).length+' сообщения не нанесены: точное место не указано.';
  redraw();if(root.classList.contains('active'))initMap();
  }catch(e){count.textContent='Нет данных точек';status.textContent='Не удалось загрузить отчёты. Карта доступна без маркеров.'}
