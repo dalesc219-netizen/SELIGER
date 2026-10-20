@@ -110,3 +110,21 @@ main{padding-top:calc(var(--dock-top) + 72px)!important}
  .weather-dock .dock-item{min-width:77px}
 }
 @media(prefers-reduced-motion:reduce){.dock-item.dock-active{animation:none}}
+
+/* Gentle navigational motion inspired by mobile interaction references */
+@keyframes seliger-slide-forward{
+ from{opacity:.2;transform:translate3d(16px,0,0) scale(.992);filter:blur(2px)}
+ to{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}
+}
+@keyframes seliger-slide-backward{
+ from{opacity:.2;transform:translate3d(-16px,0,0) scale(.992);filter:blur(2px)}
+ to{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}
+}
+[data-view].view-enter-forward{animation:seliger-slide-forward .28s cubic-bezier(.2,.85,.25,1) both}
+[data-view].view-enter-backward{animation:seliger-slide-backward .28s cubic-bezier(.2,.85,.25,1) both}
+.mobile-nav button{transition:background-color .22s ease,color .22s ease,transform .22s ease}
+.mobile-nav button.active .navicon{transform:scale(1.13);transition:transform .24s cubic-bezier(.2,1.5,.4,1)}
+@media(prefers-reduced-motion:reduce){
+ [data-view].view-enter-forward,[data-view].view-enter-backward{animation:none}
+ .mobile-nav button,.mobile-nav button.active .navicon{transition:none;transform:none}
+}
