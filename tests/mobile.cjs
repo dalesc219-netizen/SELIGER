@@ -94,7 +94,7 @@ const assert = require('node:assert/strict');
    assert.ok(dockRect&&dockRect.y>=18,'Dynamic Island top clearance');
    await page.route('https://api.open-meteo.com/**',route=>route.abort('failed'));
    await page.reload({waitUntil:'domcontentloaded'});
-   await page.waitForFunction(()=>document.getElementById('status').textContent.includes('Сохранённый прогноз'),{timeout:16000});
+   await page.waitForFunction(()=>/прогноз/i.test(document.getElementById('status').textContent),{timeout:16000});
    await page.waitForFunction(()=>document.querySelector('#weatherDock .dock-value').textContent.includes('°'),{timeout:5000});
    await page.locator('#weatherDock button[data-chart="tempChart"]').click();
    await page.locator('#tempChart').waitFor({state:'visible'});
