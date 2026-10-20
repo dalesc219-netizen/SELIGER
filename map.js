@@ -91,6 +91,12 @@ root.querySelector('#mapGps').addEventListener('click',()=>{
  },e=>{button.disabled=false;status.textContent='GPS не получен: '+e.message},{enableHighAccuracy:true,timeout:12000,maximumAge:60000});
 });
 window.addEventListener('seliger:tab',e=>{if(e.detail?.id==='map')initMap();else if(map&&e.detail?.id==='charts')setTimeout(()=>map.invalidateSize(),150)});
+window.addEventListener('seliger:map-zoom',event=>{
+ if(!map){status.textContent='Масштабирование недоступно без интерактивной карты. Географические ссылки находятся ниже.';return}
+ if(event.detail?.direction==='in')map.zoomIn();
+ else if(event.detail?.direction==='out')map.zoomOut();
+});
+
 /* Confirmed base, conditional itinerary: textual advice only, never draw fake water routes. */
 (async()=>{const el=root.querySelector('#tripScenarioCards');if(!el)return;
  try{
