@@ -22,6 +22,7 @@ jobs:
           node --check app.js
           node --check mobile.js
           node --check map.js
+          node --check sw.js
       - name: Python syntax
         run: python -c "import ast,pathlib; ast.parse(pathlib.Path('update_history.py').read_text()); ast.parse(pathlib.Path('update_water.py').read_text())"
       - name: Structure smoke tests
