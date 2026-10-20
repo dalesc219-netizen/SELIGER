@@ -244,3 +244,5 @@ html{scroll-padding-top:calc(var(--dock-bottom) + 78px)}
 .research-links a{font-size:12px;color:#a8e2e4}
 .research-accuracy{font-size:11px;color:#d9c995;white-space:nowrap}
 @media(max-width:480px){.research-filter{width:100%;margin:8px 0}.research-filter select{width:100%}}
+
+.trip-base-note{display:block;flex:0 0 100%;font-size:12px;color:#b9d8db;letter-spacing:.01em;margin-top:2px}
