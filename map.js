@@ -9,7 +9,7 @@ function makeCard(r){
  const el=document.createElement('article');el.className='m-box map-report-card';el.dataset.reportId=r.id;
  const type=r.accuracy==='settlement'?'ориентир: населённый пункт':'ориентир: участок акватории';
  el.innerHTML='<div class="report-head"><strong>'+esc(r.name)+'</strong><time>'+esc(r.observed_at)+'</time></div>'+
- '<p class="source-note">'+esc(type)+' · зона неопределённости до '+Number(r.radius_m/1000).toFixed(1)+' км</p>'+
+ '<p class="source-note">'+esc(type)+' · условный район вокруг ориентира ~'+Number(r.radius_m/1000).toFixed(1)+' км</p>'+
  '<p>'+esc(r.summary)+'</p><p class="source-note">Рыба: '+r.fish.map(esc).join(', ')+'</p>'+
  '<div class="map-card-actions"><button type="button" data-focus="'+esc(r.id)+'">Найти район на карте</button><a href="'+esc(r.source)+'" target="_blank" rel="noopener noreferrer">Сообщение #'+esc(r.post_number)+' ↗</a></div>';
  return el;
@@ -19,7 +19,7 @@ function redraw(){
  if(map&&markers){markers.clearLayers();for(const r of selected){
   const p=L.circleMarker([r.lat,r.lon],{radius:9,color:'#dcf6dd',weight:2,fillColor:r.kind==='catch'?'#26b29d':'#cda67b',fillOpacity:.85}).addTo(markers);
   const area=L.circle([r.lat,r.lon],{radius:r.radius_m,weight:1,color:'#80c9c3',opacity:.5,fillColor:'#69b9ae',fillOpacity:.06,dashArray:'4 6'}).addTo(markers);
-  p.bindPopup('<strong>'+esc(r.name)+'</strong><p>'+esc(r.summary)+'</p><p>Не точка ловли. Погрешность до '+(r.radius_m/1000).toFixed(1)+' км.</p><a href="'+esc(r.source)+'" target="_blank" rel="noopener noreferrer">Исходное сообщение ↗</a>',{maxWidth:270});
+  p.bindPopup('<strong>'+esc(r.name)+'</strong><p>'+esc(r.summary)+'</p><p>Не точка ловли. Условный район ~'+(r.radius_m/1000).toFixed(1)+' км, не измеренная GPS-точность.</p><a href="'+esc(r.source)+'" target="_blank" rel="noopener noreferrer">Исходное сообщение ↗</a>',{maxWidth:270});
   r._marker=p;
  }}
 }
