@@ -58,3 +58,9 @@ main{padding-bottom:calc(90px + env(safe-area-inset-bottom))}
  .panel.wide{grid-column:1 / -1}
 }
 @media (prefers-reduced-motion:reduce) {html{scroll-behavior:auto}}
+
+/* Do not let diary content or scrolling overlap bottom navigation. */
+@media (max-width:800px), (orientation:landscape) and (max-height:550px) {
+ body > .mobile-nav{position:fixed!important;bottom:0!important;top:auto!important;left:0!important;right:0!important;margin:0!important;max-width:none!important;z-index:2147483647!important;isolation:isolate;pointer-events:auto}
+ body > .mobile-nav button{position:relative;z-index:1;touch-action:manipulation}
+}
