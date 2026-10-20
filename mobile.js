@@ -112,6 +112,7 @@ function setBoatMode(enabled){
  button.setAttribute('aria-label',enabled?'Выключить режим На воде':'Включить режим На воде');
  button.textContent=enabled?'✓ На воде':'⚓ На воде';
  try{localStorage.setItem('seliger-boat-mode',enabled?'1':'0')}catch(e){}
+ document.dispatchEvent(new Event('seliger:boat-mode'));
 }
 try{setBoatMode(localStorage.getItem('seliger-boat-mode')==='1')}catch(e){setBoatMode(false)}
 thumbDock.querySelector('#boatModeToggle').addEventListener('click',()=>setBoatMode(!document.body.classList.contains('boat-mode')));
