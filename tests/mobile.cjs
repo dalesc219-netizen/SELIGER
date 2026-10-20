@@ -86,7 +86,7 @@ const assert = require('node:assert/strict');
    await page.locator('#toggleHistoricalDepths').click();
    assert.equal(await page.locator('#depthsFrameContainer').isVisible(),false,'Depth viewer hides on tap');
    await page.locator('#mapFilter').selectOption('плотв');
-   assert.equal(await page.locator('.map-report-card').count(),2,'Two referenced reports include roach');
+   assert.equal(await page.locator('.map-report-card').count(),1,'Only New Eltsy confirmed for roach; Polonovka unverified species removed');
    await page.locator('#mapFilter').selectOption('судак');
    assert.equal(await page.locator('.map-report-card').count(),1,'Fish filter works');
    await page.locator('[data-tab="water"]').click();
