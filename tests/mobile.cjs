@@ -70,6 +70,15 @@ const assert = require('node:assert/strict');
    await page.locator('.map-report-card').first().waitFor({state:'visible'});
    assert.equal(await page.locator('.map-report-card').count(),2,'Two approximate source-backed fishing areas');
    assert.ok(await page.locator('#seligerMap').isVisible(),'Interactive map container visible');
+   await page.locator('#researchAreaCards .research-area-card').first().waitFor({state:'visible'});
+   assert.equal(await page.locator('#researchAreaCards .research-area-card').count(),9,'Nine research regions shown without GPS locations');
+   await page.locator('#researchSpecies').selectOption('судак');
+   assert.equal(await page.locator('#researchAreaCards .research-area-card').count(),7,'Zander research area filter excludes peaceful-only regions');
+   await page.locator('#researchSeason').selectOption('verified-catch');
+   assert.equal(await page.locator('#researchAreaCards .research-area-card').count(),2,'Only Sosnitsky and Gushcha have confirmed October zander catches');
+   await page.locator('#researchSpecies').selectOption('all');
+   await page.locator('#researchSeason').selectOption('all');
+
    assert.ok((await page.locator('.depth-box').innerText()).includes('Историческая карта'),'Historical depths clearly dated');
    await page.locator('#toggleHistoricalDepths').click();
    assert.ok(await page.locator('#depthsFrame').isVisible(),'Depth viewer opens on tap');
