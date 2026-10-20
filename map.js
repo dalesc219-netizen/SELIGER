@@ -25,14 +25,14 @@ function redraw(){
  }
 }
 function viewAll(){
- const coords=[...landmarks.map(x=>[x.lat,x.lon]),...records.map(x=>[x.lat,x.lon])];
+ const coords=[...landmarks.filter(regionVisible).map(x=>[x.lat,x.lon]),...records.filter(visible).map(x=>[x.lat,x.lon])];
  if(map&&coords.length){map.fitBounds(L.latLngBounds(coords).pad(.13),{maxZoom:11,animate:true});map.invalidateSize()}
  else if(map){map.setView([57.28,33],10)}
 }
 function redrawLandmarks(){
  if(!map||!regions)return;
  regions.clearLayers();regionById.clear();
- for(const a of landmarks){
+ for(const a of landmarks.filter(regionVisible)){
   const dot=L.circleMarker([a.lat,a.lon],{radius:10,weight:3,color:'#fbdb91',fillColor:'#674e92',fillOpacity:.9}).addTo(regions);
   dot.bindTooltip(a.name,{direction:'top',offset:[0,-10],permanent:true,opacity:.95,className:'seliger-region-label'});
   dot.bindPopup('<strong>'+esc(a.name)+'</strong><p>◆ Район исследования. Географическая метка: '+esc(a.label)+'. Это <b>НЕ точка поклёвки</b>.</p><p>'+esc(a.fish.join(', '))+'</p><a href="'+esc(a.source)+'" target="_blank" rel="noopener noreferrer">Источник географии ↗</a>');
@@ -77,7 +77,7 @@ root.querySelector('#toggleHistoricalDepths').addEventListener('click',()=>{
   holder.scrollIntoView({behavior:'smooth',block:'center'});
  }
 });
-root.querySelector('#mapFilter').addEventListener('change',e=>{filter=e.target.value;redraw()});
+root.querySelector('#mapFilter').addEventListener('change',e=>{filter=e.target.value;redraw();redrawLandmarks();viewAll();updateMapLegend()});
 root.querySelector('#mapGps').addEventListener('click',()=>{
  const button=root.querySelector('#mapGps');if(!navigator.geolocation){status.textContent='На этом устройстве GPS недоступен';return}
  button.disabled=true;status.textContent='Запрашиваем разрешение на геопозицию…';
@@ -111,13 +111,23 @@ window.addEventListener('seliger:tab',e=>{if(e.detail?.id==='map')initMap();else
  if(!r.ok)throw Error('HTTP '+r.status);const d=await r.json();
  landmarks=(d.anchors||[]).filter(a=>Number.isFinite(a.lat)&&Number.isFinite(a.lon)).map(a=>({...a,name:a.label.split(' · ')[0],fish:[]}));
  if(map){redrawLandmarks();viewAll()}else if(document.getElementById('mapFallbackLinks'))drawFallbackLinks()
- const m=document.getElementById('mapLegend');if(m)m.textContent='● Отчёты: '+records.length+' · ◆ Районы: '+landmarks.length+' · не точки ловли';
+ updateMapLegend();
  researchDraw();
 }catch(e){status.textContent='Районы не загружены: '+e.message;}})();
 /* Research zones are intentionally separate from geographic report pins. */
 let researchAreas=[];
 const researchList=root.querySelector('#researchAreaCards'),researchCount=root.querySelector('#researchCount');
 const fishGroup={мирная:['плотва','подлещик','лещ','густера','язь','линь']};
+function regionVisible(anchor){
+ const r=researchAreas.find(x=>x.id===anchor.id);
+ if(!r)return false;
+ if(filter!=='all'&&!r.species.some(f=>f.toLowerCase().includes(filter)))return false;
+ return researchFiltered(r);
+}
+function updateMapLegend(){
+ const e=document.getElementById('mapLegend');
+ if(e)e.textContent='● Отчёты: '+records.filter(visible).length+' · ◆ Районы: '+landmarks.filter(regionVisible).length+' · не точки ловли';
+}
 function researchFiltered(r){
  const fish=root.querySelector('#researchSpecies').value,season=root.querySelector('#researchSeason').value;
  const matchFish=fish==='all'||(fish==='мирная'?r.species.some(x=>fishGroup.мирная.includes(x)):r.species.includes(fish));
@@ -127,6 +137,7 @@ function researchFiltered(r){
 function researchDraw(){
  const rows=researchAreas.filter(researchFiltered);researchList.replaceChildren();
  researchCount.textContent=rows.length+' из '+researchAreas.length+' районов';
+ redrawLandmarks();updateMapLegend();
  if(!rows.length){researchList.textContent='Подтверждённых районов с такими условиями нет.';return}
  for(const r of rows){
   const article=document.createElement('article');article.className='research-area-card';
@@ -138,7 +149,7 @@ function researchDraw(){
   researchList.append(article);
  }
 }
-for(const id of ['researchSpecies','researchSeason'])root.querySelector('#'+id).addEventListener('change',researchDraw);
+for(const id of ['researchSpecies','researchSeason'])root.querySelector('#'+id).addEventListener('change',()=>{researchDraw();viewAll()});
 (async()=>{try{const r=await fetch('data/research_areas.json?v='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const d=await r.json();researchAreas=(d.areas||[]).filter(x=>x&&x.latitude===null&&x.longitude===null&&Array.isArray(x.species));researchDraw();redrawLandmarks();if(map)viewAll()}catch(e){researchCount.textContent='Данные недоступны';researchList.textContent='Не удалось загрузить исследовательские районы.'}})();
 (async()=>{try{
  const response=await fetch('data/forum_scan_state.json?ts='+Date.now(),{cache:'no-store'});
@@ -149,7 +160,7 @@ for(const id of ['researchSpecies','researchSeason'])root.querySelector('#'+id).
 }catch(e){}})();
 (async()=>{
  try{const response=await fetch('data/map_points.json?ts='+Date.now(),{cache:'no-store'});if(!response.ok)throw Error('HTTP '+response.status);const d=await response.json();
- records=(d.points||[]).filter(r=>Number.isFinite(r.lat)&&Number.isFinite(r.lon)&&Array.isArray(r.fish)&&r.source); const lg=document.getElementById('mapLegend');if(lg)lg.textContent='● Отчёты: '+records.length+' · ◆ Районы: '+landmarks.length+' · не точки ловли';
+ records=(d.points||[]).filter(r=>Number.isFinite(r.lat)&&Number.isFinite(r.lon)&&Array.isArray(r.fish)&&r.source); updateMapLegend();
  const non=document.getElementById('unlocatedReports');if(non)non.textContent=(d.unlocated_references||[]).length+' сообщения не нанесены: точное место не указано.';
  redraw();if(root.classList.contains('active'))initMap();if(document.getElementById('mapFallbackLinks'))drawFallbackLinks();
  }catch(e){count.textContent='Нет данных точек';status.textContent='Не удалось загрузить отчёты. Карта доступна без маркеров.'}
