@@ -2,8 +2,8 @@
   "as_of": "2026-10-20",
   "method": "Classification of 22 user-supplied ledger records, not full forum crawl",
   "review_count": 22,
-  "publicly_checked_count": 17,
-  "partial_count": 5,
+  "publicly_checked_count": 19,
+  "partial_count": 3,
   "pending_count": 0,
   "exact_fishing_gps_points": 0,
   "notes": [
@@ -12,7 +12,8 @@
     "E01: 22 August catch, 23 August publication; current live map mistakenly uses publication date.",
     "S11: advertising claims and suspicious image filename; exclude from independent catch count.",
     "P01: camp location identified, full fish-by-fish catch list not verified in primary post.",
-    "O01 #199 is June 18–19, 2024; separate #198 has depth 4–5m and must not be merged."
+    "O01 #199 is June 18–19, 2024; separate #198 has depth 4–5m and must not be merged.",
+    "F01/F02 checked: 2017 promotional deep-pike claims disputed by direct weed-edge catches and zero jig/trolling reported by another angler."
   ],
   "entries": [
     {
@@ -97,12 +98,12 @@
     },
     {
       "ledger_id": "F01",
-      "status": "partial",
+      "status": "checked_public",
       "export_as_catch_coordinate": false
     },
     {
       "ledger_id": "F02",
-      "status": "partial",
+      "status": "checked_public",
       "export_as_catch_coordinate": false
     },
     {
