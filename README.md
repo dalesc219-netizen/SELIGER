@@ -1,5 +1,17 @@
 # SELIGER / Fishing Weather
 
+## Mobile fishing app (2026-10-20)
+
+- Portrait: bottom navigation Today / Charts / Diary / Reports, touch-friendly controls.
+- Landscape: expanded two-column graph layouts and compact tabs.
+- Today: 3-day summary of min/max temperatures, precipitation, maximum gusts, sunrise and sunset (Open-Meteo; timezone Europe/Moscow).
+- Diary: manually log species, weight, lure, notes, spot; optional opt-in browser GPS coordinates. Entries live in localStorage on that one device, with JSON export. No cloud sync, no automatic import.
+- Reports: direct links to relevant Seliger sections on Rusfishing; no scraped or fabricated catch data.
+- Chart.js runs from an external CDN; live weather needs internet. Static HTML is not an offline-ready PWA.
+- Bite index is heuristic, not catch probability; marine safety must not be inferred from it.
+- Inspired by the user's earlier RYBA app: diary, point entry, species factors and report filtering. Rybinsk coordinates/historical overlays and unverified social modifiers were intentionally not copied.
+
+
 Responsive static weather dashboard for Ostashkov, Lake Seliger. Russian UI.
 
 ## Features
