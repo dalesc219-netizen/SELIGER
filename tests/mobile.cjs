@@ -41,6 +41,11 @@ const assert = require('node:assert/strict');
    await page.locator('[data-period="6h"]').click();
 
    await page.locator('#tempChart').waitFor({state:'visible'});
+   await page.waitForFunction(()=>typeof charts!=='undefined'&&charts.tempChart?.config?.options?.nowMarker===true,{timeout:15000});
+   const nowMarker=await page.evaluate(()=>({idx:charts.tempChart.config.options.nowIndex,length:charts.tempChart.config.data.labels.length}));
+   assert.ok(nowMarker.idx>0&&nowMarker.idx<nowMarker.length-1,'NOW indicator appears between past and future');
+   assert.equal(nowMarker.length,7,'six-hour default includes -3, NOW and +3');
+
    await page.waitForFunction(()=>{const c=document.getElementById('tempChart');return c.width>200&&c.height>100&&c.getContext('2d').getImageData(0,0,c.width,c.height).data.some(v=>v>0)},{timeout:15000});
    assert.ok(await page.locator('.chart-jumps button').count()>=6);
    await page.locator('.chart-jumps [data-chart="windChart"]').click();
