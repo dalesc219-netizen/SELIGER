@@ -16,15 +16,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Check fishing-trip window
+        id: trip
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ] || [ "$(date -u +%Y%m%d)" -le 20261025 ]; then
+            echo "active=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "active=false" >> "$GITHUB_OUTPUT"
+          fi
       - uses: actions/setup-python@v5
+        if: steps.trip.outputs.active == 'true'
         with:
           python-version: '3.12'
       - run: python update_history.py
+        if: steps.trip.outputs.active == 'true'
       - name: Update Ostashkov water gauge
+        if: steps.trip.outputs.active == 'true'
         run: python update_water.py
       - name: Commit snapshot
+        if: steps.trip.outputs.active == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/history.json data/latest.json data/water.json
+          git add data/history.json data/latest.json data/water.json data/water_history.json
           git diff --cached --quiet || (git commit -m "data: snapshot forecast" && git push)
