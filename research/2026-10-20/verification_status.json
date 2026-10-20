@@ -3,7 +3,7 @@
   "method": "Classification of 22 user-supplied ledger records, not full forum crawl",
   "review_count": 22,
   "publicly_checked_count": 19,
-  "partial_count": 3,
+  "partial_count": 0,
   "pending_count": 0,
   "exact_fishing_gps_points": 0,
   "notes": [
@@ -13,7 +13,8 @@
     "S11: advertising claims and suspicious image filename; exclude from independent catch count.",
     "P01: camp location identified, full fish-by-fish catch list not verified in primary post.",
     "O01 #199 is June 18–19, 2024; separate #198 has depth 4–5m and must not be merged.",
-    "F01/F02 checked: 2017 promotional deep-pike claims disputed by direct weed-edge catches and zero jig/trolling reported by another angler."
+    "F01/F02 checked: 2017 promotional deep-pike claims disputed by direct weed-edge catches and zero jig/trolling reported by another angler.",
+    "All 22 have admissibility decision, but 3 bounded records remain unsuitable as independent confirmed October catches. Source coverage outside supplied ledger incomplete."
   ],
   "entries": [
     {
@@ -63,13 +64,15 @@
     },
     {
       "ledger_id": "S10",
-      "status": "partial",
-      "export_as_catch_coordinate": false
+      "status": "bounded_no_catch_verified",
+      "export_as_catch_coordinate": false,
+      "include_in_independent_october_catch_count": false
     },
     {
       "ledger_id": "S11",
-      "status": "partial_commercial",
-      "export_as_catch_coordinate": false
+      "status": "bounded_commercial_unverified_catch",
+      "export_as_catch_coordinate": false,
+      "include_in_independent_october_catch_count": false
     },
     {
       "ledger_id": "G01",
@@ -78,8 +81,9 @@
     },
     {
       "ledger_id": "P01",
-      "status": "partial",
-      "export_as_catch_coordinate": false
+      "status": "bounded_partial_2026_august",
+      "export_as_catch_coordinate": false,
+      "include_in_independent_october_catch_count": false
     },
     {
       "ledger_id": "B01",
@@ -126,5 +130,7 @@
       "status": "checked_public",
       "export_as_catch_coordinate": false
     }
-  ]
+  ],
+  "bounded_count": 3,
+  "review_decisions_complete": 22
 }
