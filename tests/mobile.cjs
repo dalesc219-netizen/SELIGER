@@ -75,6 +75,14 @@ const assert = require('node:assert/strict');
    assert.ok((await page.locator('#tripScenariosSection').innerText()).includes('не судоводительские маршруты'),'Route disclaimer visible');
    await page.locator('#researchAreaCards .research-area-card').first().waitFor({state:'visible'});
    assert.equal(await page.locator('#researchAreaCards .research-area-card').count(),9,'Nine research regions shown without GPS locations');
+   await page.waitForFunction(()=>document.getElementById('mapLegend')?.textContent.includes('Районы: 9'),{timeout:12000});
+   assert.ok((await page.locator('#mapLegend').innerText()).includes('Отчёты: 2'),'Two report markers counted');
+   await page.locator('#mapAll').click();
+   assert.equal(await page.locator('.research-locate').count(),9,'Every research region has clickable locate control');
+   if(await page.evaluate(()=>typeof L!=='undefined'&&!!document.querySelector('.leaflet-container'))){
+     assert.equal(await page.locator('.leaflet-interactive').count()>=11,true,'At least nine research anchors and two report markers are rendered');
+   }
+
    await page.locator('#researchSpecies').selectOption('судак');
    assert.equal(await page.locator('#researchAreaCards .research-area-card').count(),7,'Zander research area filter excludes peaceful-only regions');
    await page.locator('#researchSeason').selectOption('verified-catch');
