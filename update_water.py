@@ -68,4 +68,17 @@ except Exception as exc:
     print('Water temperature unavailable, preserving last dated measurement:',exc)
 
 data.setdefault('temperature',{'celsius':None,'measured_at':None})
+history_path=root/'data/water_history.json'
+try:
+    history=json.loads(history_path.read_text(encoding='utf-8'))
+    if not isinstance(history,list):history=[]
+except (OSError,ValueError):
+    history=[]
+if data.get('level',{}).get('measured_at'):
+    entry={'measured_at':data['level']['measured_at'],'level_cm':data['level'].get('cm'),'source':data['level'].get('source')}
+    if not any(x.get('measured_at')==entry['measured_at'] for x in history):
+        history.append(entry)
+        history.sort(key=lambda x:x['measured_at'])
+        history=history[-50:]
+history_path.write_text(json.dumps(history,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 path.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
