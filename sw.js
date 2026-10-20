@@ -2,8 +2,8 @@
  * Caches only files hosted in this repository; does NOT bulk-download OSM tiles,
  * publisher imagery, or external APIs. Users should not rely on it for navigation.
  */
-const CACHE='seliger-trip-20261020-v2';
-const FILES=['./','./index.html','./app.js','./chart-core.js','./mobile.js','./mobile.css','./map.js','./favicon.svg','./data/latest.json','./data/history.json','./data/reports.json','./data/map_points.json','./data/research_areas.json','./data/water.json','./data/water_history.json','./data/forum_scan_state.json'];
+const CACHE='seliger-trip-20261020-v3';
+const FILES=['./','./index.html','./app.js','./chart-core.js','./mobile.js','./mobile.css','./map.js','./favicon.svg','./data/latest.json','./data/history.json','./data/reports.json','./data/map_points.json','./data/research_areas.json','./data/trip_base.json','./data/trip_scenarios.json','./data/water.json','./data/water_history.json','./data/forum_scan_state.json'];
 self.addEventListener('install',event=>{
  event.waitUntil(caches.open(CACHE).then(async cache=>{
   await Promise.allSettled(FILES.map(async url=>{
