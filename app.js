@@ -51,7 +51,7 @@ function render(){if(!hourly)return;if(typeof Chart==='undefined'){ $('status').
 make('tempChart',labels,[line('Воздух',val('temperature_2m'),'#77ddbd'),line('Ощущается',val('apparent_temperature'),'#e7b56e')],'°');make('windChart',labels,[line('Ветер',val('wind_speed_10m'),'#6aa6e7'),line('Порывы',val('wind_gusts_10m'),'#f0a76d')],' м/с');rainInformation(ix);make('rainChart',labels,[{label:'Осадки, мм',data:val('precipitation'),backgroundColor:'#66aee6',borderRadius:3}], ' мм','bar');make('rainChanceChart',labels,[line('Вероятность, %',val('precipitation_probability'),'#e4c66d')],' %');make('pressureChart',labels,[line('Давление',val('pressure_msl').map(mmHg),'#c0a3f5')],' мм');make('biteChart',labels,[line('Щука',ix.map(i=>biteAt(i,'pike')),'#78ddaa'),line('Судак',ix.map(i=>biteAt(i,'zander')),'#eeb675'),line('Окунь',ix.map(i=>biteAt(i,'perch')),'#87b9f2'),line('Мирная',ix.map(i=>biteAt(i,'peaceful')),'#d0a6ef')],'');renderHistory(ix);}
 function renderHistory(ix){const key=$('compareMetric').value,valid=history.filter(x=>x.hourly?.time?.length&&x.saved_at);$('historyMessage').textContent=valid.length<2?'Для сравнения нужны минимум два сохранённых выпуска. GitHub Actions накапливает их автоматически после настройки.':`Доступно сохранённых выпусков: ${valid.length}`;const labels=ix.map(i=>prettyHour(hourly.time[i]));const colors=['#70dbb8','#edb86b','#7eaee9','#d7a4e9','#e48d96'];const sets=valid.slice(-5).map((snap,j)=>{const lookup=new Map(snap.hourly.time.map((t,i)=>[t,snap.hourly[key]?.[i]]));return line(new Date(snap.saved_at).toLocaleString('ru-RU',{timeZone:TZ,day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}),ix.map(i=>{let n=lookup.get(hourly.time[i]);return n==null?null:key==='pressure_msl'?mmHg(n):n}),colors[j]);});make('historyChart',labels,sets,key==='pressure_msl'?' мм':'');}
 function current(c){const a=c||{},stamp=a.time||new Intl.DateTimeFormat('sv-SE',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',hourCycle:'h23'}).format(new Date()).replace(' ','T');let i=hourly.time.indexOf(stamp.slice(0,13)+':00');if(i<0)i=hourly.time.findIndex(t=>t>=stamp.slice(0,13));if(i<0)i=hourly.time.length-1;const t=a.temperature_2m??hourly.temperature_2m[i],f=a.apparent_temperature??hourly.apparent_temperature[i],w=a.wind_speed_10m??hourly.wind_speed_10m[i],g=a.wind_gusts_10m??hourly.wind_gusts_10m[i],p=a.pressure_msl??hourly.pressure_msl[i];$('temp').textContent=round(t,1)+'°';$('feels').textContent='Ощущается '+round(f,1)+'°';$('wind').textContent=round(w,1)+' м/с';$('gust').textContent='Порывы '+round(g,1)+' м/с';$('pressure').textContent=round(mmHg(p))+' мм';$('pressureTrend').textContent='Изменение за 3 ч '+round((p-(hourly.pressure_msl[Math.max(0,i-3)]??p))*0.75006,1)+' мм';for(const s of ['pike','zander','perch','peaceful'])$(s+'Score').textContent=(biteAt(i,s)??'—')+'/100';$('bite').textContent=round(a.precipitation??hourly.precipitation[i]??null,1)+' мм';$('biteName').textContent='Количество осадков · сейчас';const bad=(w>=6||g>=10||t<=2||(a.precipitation??hourly.precipitation[i]??0)>=2);$('safety').textContent=bad?'⚠ Возможны сложные условия: холод, порывы ветра или осадки. Перед выходом проверь волну, маршрут и фактическую погоду. Спасжилет обязателен.':'Оперативных пороговых предупреждений по доступным параметрам нет. Это НЕ подтверждение безопасности: на открытых плёсах проверяй волну, направление ветра и фактическую обстановку. Спасжилет обязателен.';}
-let lastWeatherTime=null;
+let lastWeatherTime=null,lastWeatherOrigin=null,lastWeatherPayload=null,lastResumeCheck=0;
 function forecastAgeHours(saved){
  const t=Date.parse(saved||'');
  return Number.isFinite(t)?Math.max(0,(Date.now()-t)/3600000):null;
@@ -60,22 +60,22 @@ function updatedLabel(saved,origin){
  const when=saved?new Date(saved):new Date();
  const label=Number.isNaN(when.getTime())?'время неизвестно':when.toLocaleString('ru-RU',{timeZone:TZ,day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
  const age=forecastAgeHours(saved),prefix=origin==='live'?'● Свежий запрос':'◷ Сохранённый прогноз';
- if(origin!=='live'&&age===null)return '⚠ Возраст сохранённого прогноза неизвестен · '+label+' МСК';
- if(origin!=='live'&&age>12)return '⚠ Устаревший прогноз ('+Math.floor(age)+' ч) · '+label+' МСК · не используй для выхода на воду';
- if(origin!=='live'&&age>6)return '⚠ Прогноз старше 6 часов · '+label+' МСК · обнови перед выходом';
+ if(age===null)return '⚠ Возраст сохранённого прогноза неизвестен · '+label+' МСК';
+ if(age>12)return '⚠ Устаревший прогноз ('+Math.floor(age)+' ч) · '+label+' МСК · не используй для выхода на воду';
+ if(age>6)return '⚠ Прогноз старше 6 часов · '+label+' МСК · обнови перед выходом';
  return prefix+' · '+label+' МСК';
 }
 function applyData(d,origin){
  if(!d?.hourly?.time?.length||!d.hourly.temperature_2m?.length)throw Error('Неполные погодные данные');
- hourly=d.hourly;lastWeatherTime=origin==='live'?new Date().toISOString():(d.saved_at||null);
+ hourly=d.hourly;lastWeatherTime=origin==='live'?new Date().toISOString():(d.saved_at||null);lastWeatherOrigin=origin;lastWeatherPayload=d;
  // Cached current values describe the time of the archived snapshot, not the user's current hour.
  // Always use the matching hourly forecast for a cached reading.
  const isArchived=origin!=='live';
  current(isArchived?{time:nowMoscowHour()}:d.current);render();
  $('status').textContent=updatedLabel(lastWeatherTime,origin);
  const age=forecastAgeHours(lastWeatherTime);
- $('status').dataset.freshness=origin==='live'?'live':age===null||age>12?'stale':age>6?'warning':'cached';
- if(origin!=='live'&&(age===null||age>6)){
+ $('status').dataset.freshness=age===null||age>12?'stale':age>6?'warning':origin==='live'?'live':'cached';
+ if(age===null||age>6){
    const safety=$('safety');
    if(safety)safety.textContent=(age===null||age>12?
      '⚠ Прогноз слишком старый для оценки безопасности. Перед выходом на Селигер проверь фактический ветер, волну и актуальный прогноз в другом источнике. Спасжилет обязателен.':
@@ -109,6 +109,25 @@ async function load(){
  })().finally(()=>loadingPromise=null);
  return loadingPromise;
 }
+// Reevaluate displayed weather on resume even if the phone was suspended for hours.
+function recheckWeatherAge(){
+ if(!hourly||!lastWeatherPayload)return;
+ const age=forecastAgeHours(lastWeatherTime);
+ if(age!==null&&age<=1){$('status').textContent=updatedLabel(lastWeatherTime,lastWeatherOrigin);return}
+ // Recalculate current hour only from the timestamped hourly prediction.
+ applyData({...lastWeatherPayload,current:null,saved_at:lastWeatherTime},'cache');
+}
+function resumeForecast(){
+ if(document.visibilityState==='hidden')return;
+ recheckWeatherAge();
+ if(Date.now()-lastResumeCheck<60000)return;
+ lastResumeCheck=Date.now();
+ // A live refresh is also attempted; if it fails, the timestamped old forecast remains labeled.
+ if(forecastAgeHours(lastWeatherTime)===null||forecastAgeHours(lastWeatherTime)>1||!hourly)load();
+}
+document.addEventListener('visibilitychange',resumeForecast);
+window.addEventListener('pageshow',event=>{if(event.persisted)resumeForecast()});
+window.addEventListener('focus',resumeForecast);
 const periodLabels={'6h':'6 часов','24h':'24 часа','3d':'3 дня','7d':'7 дней'};
 document.querySelectorAll('[data-period]').forEach(b=>b.addEventListener('click',()=>{
  period=b.dataset.period;
