@@ -28,6 +28,10 @@ const assert = require('node:assert/strict');
    assert.equal(oversize,false,scenario.name+' horizontal document overflow');
    await page.locator('#periodSummary').waitFor({state:'attached'});
    assert.ok((await page.locator('#periodSummary').innerText()).includes('±3 часа'));
+   await page.locator('#daystrip .daycard').first().waitFor({state:'visible',timeout:12000});
+   assert.equal(await page.locator('#daystrip .daycard').count(),4,'Trip forecast covers Oct 22–25 only');
+   assert.ok((await page.locator('.trip-heading').innerText()).includes('22–25 октября'));
+
    await page.waitForFunction(()=>typeof window.Chart==='function'&&document.getElementById('pikeScore').textContent.includes('/100'));
    for(const species of ['pike','zander','perch','peaceful'])assert.match(await page.locator('#'+species+'Score').innerText(),new RegExp('[0-9]+/100'));
    await page.locator('[data-tab="charts"]').click();
