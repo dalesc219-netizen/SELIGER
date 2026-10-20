@@ -23,7 +23,7 @@ async function audit(engine,name,w,h){
   const response=await page.goto(target,{waitUntil:'domcontentloaded',timeout:40000});
   record('Published site responds',response?.status()===200,'HTTP '+response?.status());
   await page.locator('#weatherDock').waitFor({timeout:12000});
-  await page.waitForFunction(()=>/Свежий прогноз|Сохранённый прогноз|Нет погодных данных/.test(document.querySelector('#status')?.textContent||''),{timeout:26000});
+  await page.waitForFunction(()=>/Свежий запрос|Сохранённый прогноз|Устаревший прогноз|Прогноз старше 6 часов|Нет погодных данных/.test(document.querySelector('#status')?.textContent||''),{timeout:26000});
   const status=await page.locator('#status').innerText();
   record('Weather loaded',!/Нет погодных данных/.test(status),status);
   const metrics=await page.locator('#weatherDock .dock-value').allTextContents();
