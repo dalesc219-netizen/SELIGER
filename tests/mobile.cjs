@@ -84,6 +84,11 @@ const assert = require('node:assert/strict');
      assert.equal(await page.locator('#seligerMap').getAttribute('data-report-pins'),'2','Leaflet rendered two report markers');
    }
 
+   await page.locator('#mapFilter').selectOption('судак');
+   await page.waitForFunction(()=>document.querySelector('#seligerMap')?.dataset.regionPins==='2');
+   assert.equal(await page.locator('#seligerMap').getAttribute('data-region-pins'),'2','Fish map filter hides non-zander regions');
+   await page.locator('#mapFilter').selectOption('all');
+   await page.waitForFunction(()=>document.querySelector('#seligerMap')?.dataset.regionPins==='9');
    await page.locator('#researchSpecies').selectOption('судак');
    assert.equal(await page.locator('#researchAreaCards .research-area-card').count(),7,'Zander research area filter excludes peaceful-only regions');
    await page.locator('#researchSeason').selectOption('verified-catch');
@@ -123,6 +128,24 @@ const assert = require('node:assert/strict');
    assert.ok(stale.status.includes('Устаревший прогноз'),'Stale saved forecast clearly labeled');
    assert.ok(!stale.temp.includes('99'),'Archived current temperature is not presented as current');
    assert.ok(stale.safety.includes('слишком старый'),'Stale forecast cannot imply safe boating conditions');
+   const resumed=await page.evaluate(()=>{
+     lastWeatherTime=new Date(Date.now()-15*3600000).toISOString();
+     lastWeatherOrigin='live';
+     recheckWeatherAge();
+     return {label:document.getElementById('status').textContent,freshness:document.getElementById('status').dataset.freshness};
+   });
+   assert.equal(resumed.freshness,'stale','Returning from background marks old live weather as stale');
+   assert.ok(resumed.label.includes('Устаревший'),'A live label cannot survive 15h of suspension');
+   const cacheKeys=await page.evaluate(async()=>{
+     const keys=await caches.keys(),name=keys.find(k=>k.startsWith('seliger-trip-20261020-v5'));
+     if(!name)return [];
+     await fetch('data/latest.json?v=regression-one');
+     await fetch('data/latest.json?v=regression-two');
+     const cache=await caches.open(name);
+     return (await cache.keys()).filter(x=>new URL(x.url).pathname.endsWith('/data/latest.json')).map(x=>x.url);
+   });
+   assert.equal(cacheKeys.length,1,'Only one canonical latest forecast entry after different cache busters');
+
    await page.route('https://api.open-meteo.com/**',route=>route.abort('failed'));
    await page.reload({waitUntil:'domcontentloaded'});
    await page.waitForFunction(()=>/прогноз/i.test(document.getElementById('status').textContent),{timeout:16000});
