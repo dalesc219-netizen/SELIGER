@@ -41,14 +41,15 @@ self.addEventListener('fetch',event=>{
  }
  event.respondWith((async()=>{
   const cache=await caches.open(CACHE);
-  const found=await cache.match(request,{ignoreSearch:true});
-  if(found)return found;
+  // Network-first avoids pinning an old version when GitHub Pages updates.
+  // The previously visited copy remains available offline.
   try{
    const res=await fetch(request);
    if(res.ok)await cache.put(request,res.clone());
    return res;
   }catch(error){
-   return cache.match('./index.html')||new Response('Нет интернета. Открой SELIGER после подключения к сети.',{status:503,headers:{'Content-Type':'text/plain; charset=utf-8'}});
+   const found=await cache.match(request,{ignoreSearch:true});
+   return found||cache.match('./index.html')||new Response('Нет интернета. Открой SELIGER после подключения к сети.',{status:503,headers:{'Content-Type':'text/plain; charset=utf-8'}});
   }
  })());
 });
