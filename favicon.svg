@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Селигер — Нилова пустынь над озером">
+<rect width="64" height="64" rx="15" fill="#102b38"/>
+<path d="M5 48c7-4 12-4 19 0s12 4 19 0 12-4 16 0" fill="none" stroke="#53c6bb" stroke-width="5" stroke-linecap="round"/>
+<path d="M5 57c7-4 12-4 19 0s12 4 19 0 12-4 16 0" fill="none" stroke="#53c6bb" stroke-width="3.5" stroke-linecap="round" opacity=".8"/>
+<path d="M13 45V33h10v-8h18v8h9v12H13Z" fill="#f8f4df"/>
+<path d="M25 25h14v-5c0-6-4-8-7-11-3 3-7 5-7 11v5Z" fill="#ecc56f"/>
+<path d="M32 7v8m-4-4h8" stroke="#ecc56f" stroke-width="2.8" stroke-linecap="round"/>
+<path d="M19 35v7m26-7v7" stroke="#102b38" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M29 33h6v12h-6z" fill="#102b38"/>
+<path d="M12 46h40" stroke="#ecc56f" stroke-width="2" stroke-linecap="round"/>
+</svg>
