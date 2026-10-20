@@ -56,9 +56,9 @@ class SeligerChart {
    c.fillText('СЕЙЧАС',lx,top+13);
    if(this.config.options?.markPast&&w>260){
     c.font='10px system-ui,sans-serif';c.fillStyle='#9faebf';
-    c.fillText('ПРОШЛОЕ',left+(markerX-left)/2,top+27);
+    c.fillText('МОДЕЛЬ −3ч',left+(markerX-left)/2,top+27);
     c.fillStyle='#86dab9';
-    c.fillText('ПРОГНОЗ',markerX+(w-right-markerX)/2,top+27);
+    c.fillText('ПРОГНОЗ +3ч',markerX+(w-right-markerX)/2,top+27);
    }
    c.restore();
   }
