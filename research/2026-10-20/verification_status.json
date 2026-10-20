@@ -1,0 +1,128 @@
+{
+  "as_of": "2026-10-20",
+  "method": "Classification of 22 user-supplied ledger records, not full forum crawl",
+  "review_count": 22,
+  "publicly_checked_count": 16,
+  "partial_count": 5,
+  "pending_count": 1,
+  "exact_fishing_gps_points": 0,
+  "notes": [
+    "A checked_public status means a public indexed page or primary post supports the core statement, not that every inline image/comment is independently authenticated.",
+    "Z02: report is negative for Seliger, not proven negative in Zaplavye itself.",
+    "E01: 22 August catch, 23 August publication; current live map mistakenly uses publication date.",
+    "S11: advertising claims and suspicious image filename; exclude from independent catch count.",
+    "P01: camp location identified, full fish-by-fish catch list not verified in primary post."
+  ],
+  "entries": [
+    {
+      "ledger_id": "S01",
+      "status": "checked_public",
+      "export_as_catch_coordinate": false
+    },
+    {
+      "ledger_id": "S02",
+      "status": "checked_public",
+      "export_as_catch_coordinate": false
+    },
+    {
+      "ledger_id": "S03",
+      "status": "checked_public",
+      "export_as_catch_coordinate": false
+    },
+    {
+      "ledger_id": "S04",
+      "status": "checked_public",
+      "export_as_catch_coordinate": false
+    },
+    {
+      "ledger_id": "S05",
+      "status": "checked_public",
+      "export_as_catch_coordinate": false
+    },
+    {
+      "ledger_id": "S06",
+      "status": "checked_public",
+      "export_as_catch_coordinate": false
+    },
+    {
+      "ledger_id": "S07",
+      "status": "checked_public",
+      "export_as_catch_coordinate": false
+    },
+    {
+      "ledger_id": "S08",
+      "status": "checked_public",
+      "export_as_catch_coordinate": false
+    },
+    {
+      "ledger_id": "S09",
+      "status": "checked_public",
+      "export_as_catch_coordinate": false
+    },
+    {
+      "ledger_id": "S10",
+      "status": "partial",
+      "export_as_catch_coordinate": false
+    },
+    {
+      "ledger_id": "S11",
+      "status": "partial_commercial",
+      "export_as_catch_coordinate": false
+    },
+    {
+      "ledger_id": "G01",
+      "status": "checked_public",
+      "export_as_catch_coordinate": false
+    },
+    {
+      "ledger_id": "P01",
+      "status": "partial",
+      "export_as_catch_coordinate": false
+    },
+    {
+      "ledger_id": "B01",
+      "status": "checked_public",
+      "export_as_catch_coordinate": false
+    },
+    {
+      "ledger_id": "Z01",
+      "status": "checked_public",
+      "export_as_catch_coordinate": false
+    },
+    {
+      "ledger_id": "Z02",
+      "status": "checked_geo_downgrade",
+      "export_as_catch_coordinate": false
+    },
+    {
+      "ledger_id": "F01",
+      "status": "partial",
+      "export_as_catch_coordinate": false
+    },
+    {
+      "ledger_id": "F02",
+      "status": "partial",
+      "export_as_catch_coordinate": false
+    },
+    {
+      "ledger_id": "C01",
+      "status": "checked_public",
+      "export_as_catch_coordinate": false
+    },
+    {
+      "ledger_id": "C02",
+      "status": "checked_public",
+      "export_as_catch_coordinate": false
+    },
+    {
+      "ledger_id": "E01",
+      "status": "checked_public_date_corrected",
+      "export_as_catch_coordinate": false
+    },
+    {
+      "ledger_id": "O01",
+      "status": "pending",
+      "export_as_catch_coordinate": false
+    }
+  ]
+}
