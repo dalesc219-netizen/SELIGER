@@ -1,42 +1,33 @@
-# SELIGER / Fishing Weather
+# SELIGER · мобильное приложение для рыбалки
 
-## Mobile fishing app (2026-10-20)
+Актуальная версия: https://dalesc219-netizen.github.io/SELIGER/
 
-- Portrait: bottom navigation Today / Charts / Diary / Reports, touch-friendly controls.
-- Landscape: expanded two-column graph layouts and compact tabs.
-- Today: 3-day summary of min/max temperatures, precipitation, maximum gusts, sunrise and sunset (Open-Meteo; timezone Europe/Moscow).
-- Diary: manually log species, weight, lure, notes, spot; optional opt-in browser GPS coordinates. Entries live in localStorage on that one device, with JSON export. No cloud sync, no automatic import.
-- Reports: direct links to relevant Seliger sections on Rusfishing; no scraped or fabricated catch data.
-- Chart.js runs from an external CDN; live weather needs internet. Static HTML is not an offline-ready PWA.
-- Bite index is heuristic, not catch probability; marine safety must not be inferred from it.
-- Inspired by the user's earlier RYBA app: diary, point entry, species factors and report filtering. Rybinsk coordinates/historical overlays and unverified social modifiers were intentionally not copied.
+Подготовка к рыбалке **22–25 октября 2026 года**, озеро Селигер (район Осташкова). База старта — **«Ладья», д. Бараново, 18** (возле Неприе); наличие причала подтвердил пользователь. **Точные координаты причала и безопасные водные проходы не установлены.**
 
+## Разделы
 
-Responsive static weather dashboard for Ostashkov, Lake Seliger. Russian UI.
+- **Сегодня:** почасовой прогноз, основные показатели и экспериментальные индексы клёва.
+- **Графики:** температура, ветер и порывы, осадки, давление, сравнительная история выпусков прогноза. По умолчанию отображаются следующие 6 часов.
+- **Карта:** OSM-подложка, 9 географических ориентиров исследовательских районов и 2 ориентировочные метки рыболовных отчётов. Это **не GPS-точки поимки**; фильтры рыбы и сезонности управляют исследовательскими районами. Карту глубин можно открыть отдельно на сайте издателя.
+- **Вода:** датированные данные по уровню и температуре (при их наличии) с предупреждениями об устаревании.
+- **Отчёты:** редакционная подборка сообщений Русфишинга с датами и ссылками; охват форума неполный.
 
-## Features
-- Hourly temperature and feels-like, wind/gusts, precipitation, pressure.
-- 3/7/14-day windows and Oct 23–25 2026 trip window (if still in forecast horizon).
-- Species-specific **heuristic** bite index for pike, zander, perch; not a validated probability of catching fish.
-- Comparison of archived forecast **snapshots** for the same valid hour.
-- Weather data from Open-Meteo. Fishing context from Rusfishing; forum content is not scraped or reproduced.
-- No paid APIs or API keys.
+Схема маршрутов на 22–25 октября в `data/trip_scenarios.json` — **сценарии разведки, не судоводительские маршруты**. Не использовать прямую линию между населёнными пунктами для движения по воде.
 
-## Deploy
-1. Create a **new public GitHub repository** (e.g. `seliger-fishing-weather`).
-2. Upload all files, including `.github/workflows/weather.yml`.
-3. Repository Settings → Pages → Deploy from a branch → `main` / root → Save.
-4. Repository Actions → `Save weather forecast` → Run workflow once to seed history.
-5. Repository Settings → Actions → General → Workflow permissions: allow read and write permissions if necessary.
-6. Scheduled GitHub Actions run approximately every six hours (not guaranteed to run at exact minute). Check repository history if updates stall.
+## Данные и связь
 
-## Run locally
-`python -m http.server 8000` then open `http://localhost:8000`.
+Погода поступает из Open-Meteo (московское время `Europe/Moscow`), сохранённые выпуски — в `data/latest.json` и `data/history.json`. При возвращении из фонового режима программа переоценивает возраст прогноза и при устаревании пытается получить новый. **«Свежий запрос» означает только недавнее получение модельного прогноза, не измерение на водоёме.**
 
-## Important caveats
-- Weather is a **model forecast**, not on-water observations. Forecast snapshots show forecast changes, not measured historical weather.
-- Historical data begins when workflow is enabled. To backfill earlier forecast runs, a separate Open-Meteo Single Runs integration is needed.
-- Open-Meteo free noncommercial usage terms and GitHub Actions usage limits apply.
-- CDN Chart.js needs internet. Never rely on this tool alone for boating safety.
-- Wind and gusts thresholds in UI are advisory, not certified operating limits for a particular boat.
-- The bite index is intentionally heuristic, not scientifically validated; pressure, wind and daylight are weak proxies for actual fish activity.
+Сервис-воркер `sw.js` сохраняет собственные файлы проекта и последние доступные JSON. Для каждого набора данных — один канонический ключ, не зависящий от параметров запроса `?v=`/`?ts=`. Первый запуск требует интернета. Картографические тайлы OSM, просмотрщик глубин и внешние API **не обеспечены офлайн**. Перед выездом открой приложение с сетью. Нельзя использовать SELIGER как единственный навигационный или метеорологический источник.
+
+Часть исследовательских районов — только названия акваторий; географические координаты показывают ориентиры, а не рыболовные точки. Точная батиметрия, наличие/глубина проходов и местные ограничения требуют независимой проверки.
+
+## Тесты
+
+Запуск локально: `python3 -m http.server 8765`, затем открыть `http://127.0.0.1:8765/`.
+
+Автоматические тесты в `tests/mobile.cjs`, `tests/live-audit.cjs` и GitHub Actions (`.github/workflows/verify.yml` и тестовые workflow). Проверяются мобильные ширины, карта, фильтры, фоновое устаревание прогноза и сценарий повторного открытия без сети. Браузерные тесты на эмуляторах не заменяют проверку на реальном iPhone.
+
+## Предупреждение
+
+Индекс клёва — эвристика, не вероятность улова. Погодная модель, старые отчёты и условные районы не подтверждают безопасные условия выхода на открытую воду. Проверяй фактическую волну, видимость, порывы, топливо, жилеты и путь возвращения.
