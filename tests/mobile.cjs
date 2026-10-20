@@ -181,7 +181,7 @@ const assert = require('node:assert/strict');
    assert.equal(resumed.freshness,'stale','Returning from background marks old live weather as stale');
    assert.ok(resumed.label.includes('Устаревший'),'A live label cannot survive 15h of suspension');
    const cacheKeys=await page.evaluate(async()=>{
-     const keys=await caches.keys(),name=keys.find(k=>k.startsWith('seliger-trip-20261020-v5'));
+     const keys=await caches.keys(),name=keys.find(k=>k.startsWith('seliger-trip-20261020-v6'));
      if(!name)return [];
      await fetch('data/latest.json?v=regression-one');
      await fetch('data/latest.json?v=regression-two');
