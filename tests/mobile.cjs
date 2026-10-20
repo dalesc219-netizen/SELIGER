@@ -24,6 +24,31 @@ const assert = require('node:assert/strict');
    });
    await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded'});
    await page.locator('.mobile-nav button[data-tab="today"]').waitFor();
+   // The one-hand bar must stay above bottom navigation in both orientations.
+   await page.locator('#thumbDock').waitFor({state:'visible'});
+   assert.equal(await page.locator('#thumbDock').getAttribute('data-tab'),'today');
+   const thumbGeometry=await page.evaluate(()=>{
+     const thumb=document.getElementById('thumbDock').getBoundingClientRect();
+     const nav=document.querySelector('.mobile-nav').getBoundingClientRect();
+     const active=[...document.querySelectorAll('#thumbDock button,#thumbDock select')]
+       .filter(x=>x.getClientRects().length && getComputedStyle(x).visibility!=='hidden')
+       .map(x=>({name:x.id||x.textContent.trim(),width:x.getBoundingClientRect().width,height:x.getBoundingClientRect().height}));
+     return {thumbBottom:thumb.bottom,navTop:nav.top,thumbTop:thumb.top,active};
+   });
+   assert.ok(thumbGeometry.thumbBottom<=thumbGeometry.navTop+3,scenario.name+' thumb dock must not overlap navigation');
+   assert.ok(thumbGeometry.thumbTop>=0,scenario.name+' thumb dock within viewport');
+   assert.ok(thumbGeometry.active.every(x=>x.width>=43.5&&x.height>=43.5),scenario.name+' minimum 44px actionable hit areas: '+JSON.stringify(thumbGeometry.active));
+   await page.locator('#boatModeToggle').click();
+   assert.ok(await page.locator('body.boat-mode').count(),'Boat mode enabled');
+   assert.equal(await page.locator('#boatModeToggle').getAttribute('aria-pressed'),'true');
+   await page.locator('#boatModeToggle').click();
+   assert.equal(await page.locator('#boatModeToggle').getAttribute('aria-pressed'),'false');
+   // Weather shortcuts duplicate unreachable top actions instead of moving the data cards.
+   await page.locator('#thumbWind').click();
+   await page.locator('#windChart').waitFor({state:'visible'});
+   assert.equal(await page.locator('#thumbDock').getAttribute('data-tab'),'charts');
+   await page.locator('[data-tab="today"]').click();
+
    const oversize=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+2);
    assert.equal(oversize,false,scenario.name+' horizontal document overflow');
    await page.locator('#periodSummary').waitFor({state:'attached'});
@@ -35,6 +60,11 @@ const assert = require('node:assert/strict');
    await page.waitForFunction(()=>typeof window.Chart==='function'&&document.getElementById('pikeScore').textContent.includes('/100'));
    for(const species of ['pike','zander','perch','peaceful'])assert.match(await page.locator('#'+species+'Score').innerText(),new RegExp('[0-9]+/100'));
    await page.locator('[data-tab="charts"]').click();
+   await page.locator('#thumbDock [data-thumb-period="24h"]').click();
+   assert.ok((await page.locator('#periodSummary').innerText()).includes('24 часа'),'Bottom period switch updates canonical period');
+   assert.equal(await page.locator('#thumbDock [data-thumb-period="24h"]').getAttribute('aria-pressed'),'true');
+   await page.locator('#thumbDock [data-thumb-period="6h"]').click();
+
    await page.locator('#periodSummary').click();
    await page.locator('[data-period="24h"]').click();
    assert.ok((await page.locator('#periodSummary').innerText()).includes('24 часа'));
@@ -67,6 +97,17 @@ const assert = require('node:assert/strict');
    assert.equal(await page.locator('.mobile-nav [data-tab="diary"]').count(),0,'Diary hidden for short trip');
    await page.locator('[data-tab="map"]').click();
    await page.locator('#mapPage').waitFor({state:'visible'});
+   assert.equal(await page.locator('#thumbDock').getAttribute('data-tab'),'map');
+   await page.locator('#thumbFish').selectOption('судак');
+   assert.equal(await page.locator('#mapFilter').inputValue(),'судак','Thumb fish filter controls existing map filter');
+   await page.locator('#thumbFish').selectOption('all');
+   const zoomTargets=await page.locator('#thumbZoom button').evaluateAll(xs=>xs.map(x=>{
+     const r=x.getBoundingClientRect();return {w:r.width,h:r.height,visible:r.width>0&&r.height>0};
+   }));
+   assert.ok(zoomTargets.every(x=>x.visible&&x.w>=43.5&&x.h>=43.5),'Map zoom accessible near thumb');
+   await page.locator('#thumbZoom [data-map-zoom="in"]').click();
+   await page.locator('#thumbZoom [data-map-zoom="out"]').click();
+
    await page.locator('.map-report-card').first().waitFor({state:'visible'});
    assert.equal(await page.locator('.map-report-card').count(),2,'Two approximate source-backed fishing areas');
    assert.ok(await page.locator('#seligerMap').isVisible(),'Interactive map container visible');
