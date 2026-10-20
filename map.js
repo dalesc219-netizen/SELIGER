@@ -3,7 +3,7 @@
 const root=document.getElementById('mapPage');if(!root)return;
 const mapEl=document.getElementById('seligerMap'),list=document.getElementById('mapReports'),count=document.getElementById('mapCount'),status=document.getElementById('mapStatus');
 let map=null,markers=null,records=[],filter='all',userMarker=null;
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','&quot;',"'":'&#39;'}[c]));
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function visible(r){return filter==='all'||r.fish.some(f=>f.toLowerCase().includes(filter))}
 function makeCard(r){
  const el=document.createElement('article');el.className='m-box map-report-card';el.dataset.reportId=r.id;
