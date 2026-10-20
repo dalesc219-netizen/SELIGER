@@ -23,6 +23,7 @@ const assert = require('node:assert/strict');
    await page.reload({waitUntil:'domcontentloaded'});
    await page.locator('#diaryList').waitFor({state:'visible'});
    assert.ok((await page.locator('#diaryList').innerText()).includes('Тестовая точка'),'local diary persist');
+   console.log('NAV DEBUG',scenario.name,await page.evaluate(()=>{const el=document.querySelector('.mobile-nav'),b=el.getBoundingClientRect(),btn=el.querySelector('[data-tab="reports"]'),r=btn.getBoundingClientRect(),s=getComputedStyle(el);return {style:s.position,zIndex:s.zIndex,display:s.display,box:{x:b.x,y:b.y,width:b.width,height:b.height},button:{x:r.x,y:r.y,width:r.width,height:r.height},atPoint:document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.outerHTML.slice(0,140),innerHeight:innerHeight,loaded:[...document.styleSheets].map(x=>x.href)}}));
    await page.locator('[data-tab="reports"]').click();
    assert.ok(await page.locator('a[href*="rusfishing.ru"]').count()>0);
    assert.deepEqual(errors.filter(x=>!/Chart is not defined|Failed to fetch/i.test(x)),[],scenario.name+' JavaScript errors');
