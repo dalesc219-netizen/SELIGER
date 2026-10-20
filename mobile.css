@@ -155,3 +155,24 @@ html{scroll-padding-top:calc(var(--dock-bottom) + 78px)}
  .panel{scroll-margin-top:calc(var(--dock-bottom) + 64px)!important}
  .rain-prob-chart{height:145px!important}
 }
+
+/* Trip-focused October 22-25 controls */
+.trip-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin:16px 0 0;color:#e3f4ef}
+.trip-heading strong{font-size:16px;letter-spacing:-.015em}
+.trip-heading span{font-size:11px;color:#90b8c0}
+.weather-strip{grid-template-columns:repeat(4,minmax(0,1fr));margin:9px 0 18px}
+.water-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.water-reading{color:#89e9c8;font-size:29px;font-weight:800;font-variant-numeric:tabular-nums}
+.report-list{display:grid;gap:8px}
+.report-card{margin:0}
+.report-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px}
+.report-head time{font-size:11px;color:#98c2cc;font-variant-numeric:tabular-nums}
+@media(max-width:800px){
+ .weather-strip{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .trip-heading{margin-top:13px}
+ .water-grid{grid-template-columns:1fr 1fr;gap:8px}
+ .water-reading{font-size:22px}
+ .water-grid .m-box{padding:12px}
+}
+@media(max-width:340px){.water-grid{grid-template-columns:1fr}}
+@media(orientation:landscape) and (max-height:550px){.weather-strip{grid-template-columns:repeat(4,minmax(0,1fr))}}
