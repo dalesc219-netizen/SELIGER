@@ -45,6 +45,17 @@ const assert = require('node:assert/strict');
    const nowMarker=await page.evaluate(()=>({idx:charts.tempChart.config.options.nowIndex,length:charts.tempChart.config.data.labels.length}));
    assert.ok(nowMarker.idx>0&&nowMarker.idx<nowMarker.length-1,'NOW indicator appears between past and future');
    assert.equal(nowMarker.length,7,'six-hour default includes -3, NOW and +3');
+   const displayedLabels=await page.evaluate(()=>charts.tempChart.config.data.labels);
+   assert.ok(displayedLabels.some(x=>/^\\d{2}:\\d{2}$/.test(x)),'Today uses HH:MM instead of numeric ISO');
+   assert.ok(await page.locator('#rainChanceChart').count()===1,'Chance chart exists');
+   const precipitation=await page.locator('#rainSummary').innerText();
+   assert.ok(precipitation.includes('мм')&&precipitation.includes('%'),'Rain summary has mm and probability');
+   await page.locator('.chart-jumps [data-chart="rainChart"]').click();
+   const clearance=await page.evaluate(()=>{const panel=document.querySelector('#rainChart').closest('.panel').getBoundingClientRect(), dock=document.querySelector('#weatherDock').getBoundingClientRect(), jumps=document.querySelector('.chart-jumps').getBoundingClientRect();return {panel:panel.top,dock:dock.bottom,jumps:jumps.bottom}});
+   assert.ok(clearance.panel>=clearance.dock-5,'Rain panel is not hidden under fixed metrics');
+   await page.locator('#periodSummary').click();
+   await page.locator('[data-period="6h"]').click();
+
 
    await page.waitForFunction(()=>{const c=document.getElementById('tempChart');return c.width>200&&c.height>100&&c.getContext('2d').getImageData(0,0,c.width,c.height).data.some(v=>v>0)},{timeout:15000});
    assert.ok(await page.locator('.chart-jumps button').count()>=6);
