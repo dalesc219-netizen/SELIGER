@@ -181,3 +181,34 @@ html{scroll-padding-top:calc(var(--dock-bottom) + 78px)}
 .factor-grid>div{border:1px solid #314d58;border-radius:11px;padding:10px 12px;background:#132c38}
 .factor-grid b{font-size:12px;color:#d8f8e8}.factor-grid p{margin:5px 0 0;font-size:11px;line-height:1.5}
 @media(max-width:500px){.factor-grid{grid-template-columns:1fr}}
+
+/* Oct 22–25: five-tab map interface */
+#seligerMap{width:100%;height:min(58vh,540px);min-height:340px;background:#163040;border:1px solid #355868;border-radius:14px;overflow:hidden;isolation:isolate}
+.map-page{padding-bottom:16px}
+.map-page .m-title{margin:15px 0 12px}
+.map-title-line{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.map-title-line h3{font-size:16px;margin:20px 0 5px}
+.map-toolbar{display:flex;align-items:end;gap:9px;margin:6px 0 12px}
+.map-toolbar label{display:flex;flex-direction:column;flex:1;gap:5px;font-size:12px;color:#9ebfcb}
+.map-toolbar select{height:44px;padding:8px 10px;max-width:250px;width:100%}
+.map-toolbar button{height:44px;padding:8px 14px;background:#215346;border:1px solid #589b88}
+.map-page .leaflet-container{font:13px system-ui,sans-serif}
+.map-page .leaflet-popup-content{line-height:1.45}
+.map-page .leaflet-popup-content a{color:#127765}
+.map-report-card{padding:13px 14px}
+.map-report-card p{margin:7px 0}
+.map-card-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:9px}
+.map-card-actions button{border:1px solid #397c78;background:#174339;padding:9px 11px;font-size:12px}
+.map-card-actions a{font-size:12px}
+.depth-box{border-color:#666043;background:#292b29}
+.depth-box a{font-weight:650}
+@media(max-width:800px){
+ .mobile-nav button{padding:8px 1px 6px;font-size:10px}
+ .mobile-nav .navicon{font-size:18px}
+ #seligerMap{height:53vh;min-height:310px}
+ .map-toolbar select{font-size:14px}
+}
+@media(orientation:landscape) and (max-height:550px){
+ #seligerMap{height:67vh;min-height:260px}
+ .mobile-nav button{font-size:11px}
+}
