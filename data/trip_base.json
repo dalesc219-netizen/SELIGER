@@ -17,7 +17,7 @@
     "lon": 32.9981,
     "kind": "village_only_not_pier"
   },
-  "water_route_status": "base_confirmed_exact_pier_coordinates_unverified",
+  "water_route_status": "Confirmed Ladya base and owned pier; dock GPS and navigable water passages not verified",
   "source_urls": [
     "https://tvoy-seliger.com/",
     "https://tvoy-seliger.com/kontakty/",
@@ -34,5 +34,7 @@
     "База «Ладья» подтверждена пользователем 20.10.2026.",
     "Свой причал подтверждён пользователем; официальный сайт заявляет спуск водной техники.",
     "Точка деревни — не координаты причала. Не рассчитывать водные маршруты по прямой."
-  ]
+  ],
+  "shoreline_location_note": "Официальный сайт описывает базу у деревни Неприе; почтовый адрес — Бараново, 18. Центр деревни Бараново не использовать как место причала.",
+  "dock_location_source": "https://tvoy-seliger.com/o-nas/"
 }
