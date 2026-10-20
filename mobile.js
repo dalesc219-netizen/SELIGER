@@ -45,6 +45,7 @@ reports.innerHTML='<h2 class="m-title">Селигер · рыболовный р
 grid.after(reports);
 const waterPage=document.createElement('section');waterPage.className='mobile-page';waterPage.id='waterPage';waterPage.dataset.view='water';
 waterPage.innerHTML='<h2 class="m-title">Селигер · вода</h2><div class="water-grid"><article class="m-box"><h3>Уровень воды · Осташков</h3><div class="water-reading" id="lakeLevel">—</div><p id="lakeLevelDate">Загружаем измерения…</p></article><article class="m-box"><h3>Температура воды</h3><div class="water-reading" id="lakeTemperature">—</div><p id="lakeTemperatureDate">Проверяем доступные измерения…</p></article></div><p class="source-note" id="lakeCaution">Уровень — сантиметры над нулём гидропоста, не глубина озера. Устаревшие измерения не используем как текущие.</p><p><a href="https://ris.kim-online.ru/" target="_blank" rel="noopener noreferrer">Первоисточник: Канал имени Москвы ↗</a></p><p><a href="https://allrivers.info/gauge/seliger-ostashkov" target="_blank" rel="noopener noreferrer">История гидропоста и температуры воды ↗</a></p><div class="m-box"><h3>Что важно для клёва 22–25 октября</h3><p>Сильнее одного числа температуры важны её изменение, перемешивание верхнего слоя ветром, устойчивость уровня, расположение кормовой рыбы и рельеф.</p><p>Ветер и порывы влияют и на возможность безопасно ловить с лодки. Данные по волне открытых плёсов не выдаются за измеренные, если нет проверенного источника.</p><p>Время суток, освещённость и изменения давления рассматриваем как вспомогательные факторы, а не гарантии улова.</p></div>';
+const trendCard=document.createElement('div');trendCard.className='m-box';trendCard.innerHTML='<h3>Изменение уровня воды</h3><div id="waterTrend" class="source-note">Загружаем историю измерений…</div>';waterPage.append(trendCard);
 waterPage.insertAdjacentHTML('beforeend','<div class="m-box"><h3>Факторы для прогноза клёва</h3><div class="factor-grid"><div><b>Уровень и динамика</b><p>Гидропост Осташков / Канал имени Москвы. Важно изменение, а не только отметка.</p></div><div><b>Температура воды</b><p>Датированные измерения гидропоста. Пока нет свежих данных — не включаем в индекс.</p></div><div><b>Ветер и порывы</b><p>Open-Meteo; особенно важны направление ветра и разгон волны на открытых плёсах.</p></div><div><b>Давление и его изменение</b><p>Open-Meteo, почасовой прогноз. Второстепенный фактор, связь с поклёвками неоднозначна.</p></div><div><b>Свет и погода</b><p>Восход, закат, осадки — Open-Meteo. Заметны при выборе утреннего и вечернего окна.</p></div><div><b>Кормовая рыба и рельеф</b><p>Эхолот на лодке и датированные сообщения Русфишинга. По API эти данные не получить.</p></div></div><p class="source-note">Текущий индекс клёва экспериментальный и использует только погоду и время суток. Температуру и уровень воды он пока не учитывает: для этого нужны свежие измерения и проверенная модель.</p></div>');
 grid.after(waterPage);
 
@@ -83,10 +84,23 @@ async function loadWater(){
  const level=d.level||{},temperature=d.temperature||{};
  const age=x=>{if(!x?.measured_at)return null;const t=Date.parse(x.measured_at);return Number.isFinite(t)?Math.max(0,(Date.now()-t)/3600000):null};
  const valid=x=>age(x)!==null&&age(x)<=48;
- $('lakeLevel').textContent=valid(level)?Number(level.cm).toFixed(0)+' см':'Нет свежих данных';
- $('lakeLevelDate').textContent=level.measured_at?'Измерено: '+level.measured_at+' · '+(valid(level)?'актуальность ≤48 ч':'устарело, не для прогноза'):'Достоверных показаний пока нет';
- $('lakeTemperature').textContent=valid(temperature)?Number(temperature.celsius).toFixed(1)+' °C':'Нет свежих данных';
- $('lakeTemperatureDate').textContent=temperature.measured_at?'Измерено: '+temperature.measured_at+' · '+(valid(temperature)?'актуальность ≤48 ч':'устарело, не для прогноза'):'Свежей температуры воды пока нет';
+ const dateLabel=t=>{if(!t)return '—';const dt=new Date(t);return Number.isFinite(dt.getTime())?dt.toLocaleString('ru-RU',{timeZone:'Europe/Moscow',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})+' МСК':t;};
+ $('lakeLevel').textContent=valid(level)&&Number.isFinite(level.cm)?Number(level.cm).toFixed(0)+' см':'Нет свежих данных';
+ $('lakeLevelDate').textContent=level.measured_at?'Измерено: '+dateLabel(level.measured_at)+' · '+(valid(level)?'актуальность ≤48 ч':'устарело, не для прогноза'):'Достоверных показаний пока нет';
+ $('lakeTemperature').textContent=valid(temperature)&&Number.isFinite(temperature.celsius)?Number(temperature.celsius).toFixed(1)+' °C':'Нет свежих данных';
+ $('lakeTemperatureDate').textContent=temperature.measured_at?'Измерено: '+dateLabel(temperature.measured_at)+' · '+(valid(temperature)?'актуальность ≤48 ч':'устарело, не для прогноза'):'Свежей температуры воды пока нет';
+ try{
+   const hr=await fetch('data/water_history.json?v='+Date.now(),{cache:'no-store'});
+   if(hr.ok){
+    const list=(await hr.json()).filter(x=>Number.isFinite(x.level_cm)&&x.measured_at).sort((a,b)=>a.measured_at.localeCompare(b.measured_at));
+    const recent=list.slice(-5);
+    if(recent.length<2){$('waterTrend').textContent='Для анализа тенденции требуется минимум два измерения с разными датами.';}
+    else{
+     const change=recent[recent.length-1].level_cm-recent[0].level_cm;
+     $('waterTrend').textContent='За период '+dateLabel(recent[0].measured_at)+' — '+dateLabel(recent[recent.length-1].measured_at)+': '+(change>0?'+':'')+change.toFixed(0)+' см. Отдельных замеров: '+recent.length+'.';
+    }
+   }else{$('waterTrend').textContent='История измерений пока не сформирована.';}
+  }catch(e){$('waterTrend').textContent='История уровня пока недоступна.'}
  }catch(e){$('lakeLevelDate').textContent='Данные гидропоста ещё не получены';$('lakeTemperatureDate').textContent='Данные о температуре воды ещё не получены'}
 }
 loadReports();loadWater();
