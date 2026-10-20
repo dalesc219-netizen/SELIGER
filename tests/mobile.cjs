@@ -80,7 +80,8 @@ const assert = require('node:assert/strict');
    await page.locator('#mapAll').click();
    assert.equal(await page.locator('.research-locate').count(),9,'Every research region has clickable locate control');
    if(await page.evaluate(()=>typeof L!=='undefined'&&!!document.querySelector('.leaflet-container'))){
-     assert.equal(await page.locator('.leaflet-interactive').count()>=11,true,'At least nine research anchors and two report markers are rendered');
+     assert.equal(await page.locator('#seligerMap').getAttribute('data-region-pins'),'9','Leaflet rendered nine researched area markers (canvas mode supported)');
+     assert.equal(await page.locator('#seligerMap').getAttribute('data-report-pins'),'2','Leaflet rendered two report markers');
    }
 
    await page.locator('#researchSpecies').selectOption('судак');
