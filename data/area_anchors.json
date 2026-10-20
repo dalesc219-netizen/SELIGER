@@ -1,0 +1,79 @@
+{
+  "as_of": "2026-10-20",
+  "status": "verified_geographic_landmarks_not_catch_locations",
+  "warning": "Координаты обозначают топонимы, поселения и ориентировочные области, а не GPS-точки ловли. Использовать для обзора, не для навигации.",
+  "anchors": [
+    {
+      "id": "sosnitsky",
+      "lat": 57.37569,
+      "lon": 33.01505,
+      "label": "Турская · берег Сосницкого плёса",
+      "kind": "settlement",
+      "source": "https://mapcarta.com/N612570079"
+    },
+    {
+      "id": "gushcha",
+      "lat": 57.266473,
+      "lon": 32.895676,
+      "label": "Гуща · деревня в Гущинской луке",
+      "kind": "settlement",
+      "source": "https://regionum.ru/tverskaya-oblast/ostashkovskiy-rayon/guscha/"
+    },
+    {
+      "id": "polonovka",
+      "lat": 57.33056,
+      "lon": 33.075,
+      "label": "Полоновка · географический ориентир протоки",
+      "kind": "waterway_reference",
+      "source": "https://www.plantarium.ru/page/landscapes/point/10634.html"
+    },
+    {
+      "id": "berezovsky",
+      "lat": 57.311667,
+      "lon": 32.768333,
+      "label": "Берёзовский плёс · центр ориентировочной акватории по реестру названий",
+      "kind": "named_waterbody_register",
+      "source": "https://kadastr.ru/upload/export_kadastr_files/%D0%A2%D0%B2%D0%B5%D1%80%D1%81%D0%BA%D0%B0%D1%8F%20%D0%BE%D0%B1%D0%BB%D0%B0%D1%81%D1%82%D1%8C_201.pdf"
+    },
+    {
+      "id": "zaplavye",
+      "lat": 57.3261,
+      "lon": 33.1058,
+      "label": "Заплавье · официальный ориентир базы Селигерское Заплавье",
+      "kind": "settlement_site",
+      "source": "https://selzaplav.ru/"
+    },
+    {
+      "id": "krovotynsky",
+      "lat": 57.277778,
+      "lon": 33.142222,
+      "label": "Кравотынь · прибрежный ориентир плёса",
+      "kind": "settlement",
+      "source": "https://www.plantarium.ru/page/landscape/id/50071.html"
+    },
+    {
+      "id": "novye-eltsy",
+      "lat": 57.281502,
+      "lon": 32.904439,
+      "label": "Новые Ельцы · ориентир усадьбы",
+      "kind": "settlement_site",
+      "source": "https://nataturka.ru/muzey-usadba/usadba-novye-elcy.html"
+    },
+    {
+      "id": "ostashkov",
+      "lat": 57.145,
+      "lon": 33.105,
+      "label": "Осташков · городской ориентир, не рыболовная точка",
+      "kind": "settlement",
+      "source": "https://mapcarta.com/13341296"
+    },
+    {
+      "id": "zadubye",
+      "lat": 57.296881,
+      "lon": 33.001624,
+      "label": "Задубье · деревня на Селигере",
+      "kind": "settlement",
+      "source": "https://tve.2rus.org/zadube/karta/google/"
+    }
+  ]
+}
