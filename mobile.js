@@ -4,6 +4,11 @@ const $=id=>document.getElementById(id);
 const nav=document.createElement('nav');nav.className='mobile-nav';nav.setAttribute('aria-label','Разделы приложения');
 nav.innerHTML=[['today','◉','Сегодня'],['charts','▥','Графики'],['map','⌖','Карта'],['water','≈','Вода'],['reports','≋','Отчёты']].map(([id,ico,label])=>'<button type="button" data-tab="'+id+'" aria-label="'+label+'"><span class="navicon">'+ico+'</span>'+label+'</button>').join('');
 document.body.append(nav);
+const networkBadge=document.createElement('div');networkBadge.id='networkBadge';networkBadge.className='network-badge';networkBadge.setAttribute('role','status');networkBadge.setAttribute('aria-live','polite');
+networkBadge.textContent='Офлайн: показаны последние сохранённые данные. Карта глубин и подложка могут быть недоступны.';
+document.body.append(networkBadge);
+const updateNetwork=()=>{const offline=!navigator.onLine;networkBadge.classList.toggle('show',offline);networkBadge.hidden=!offline;};
+window.addEventListener('offline',updateNetwork);window.addEventListener('online',updateNetwork);updateNetwork();
 const dock=document.createElement('aside');dock.id='weatherDock';dock.className='weather-dock';dock.setAttribute('aria-label','Погодные показатели · быстрый переход к графикам');
 dock.innerHTML=[
  ['tempChart','thermo','🌡','temp','Температура'],
