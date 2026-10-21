@@ -1,12 +1,12 @@
 {
-  "checked_at": "2026-10-20T23:55:29.051184+00:00",
+  "checked_at": "2026-10-21T08:38:25.615256+00:00",
   "station": "Осташков, озеро Селигер",
   "level": {
-    "cm": 79.0,
-    "measured_at": "2026-10-19T09:03:00+03:00",
+    "cm": 78.0,
+    "measured_at": "2026-10-21T08:52:00+03:00",
     "source": "https://ris.kim-online.ru/api.php?demand=water_levels",
-    "absolute_m": 205.49,
-    "daily_change_cm": null
+    "absolute_m": 205.48,
+    "daily_change_cm": -1.0
   },
   "temperature": {
     "celsius": null,
