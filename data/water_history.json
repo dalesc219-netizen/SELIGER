@@ -13,5 +13,10 @@
     "measured_at": "2026-10-22T08:50:00+03:00",
     "level_cm": 77.0,
     "source": "https://ris.kim-online.ru/api.php?demand=water_levels"
+  },
+  {
+    "measured_at": "2026-10-23T09:02:00+03:00",
+    "level_cm": 77.0,
+    "source": "https://ris.kim-online.ru/api.php?demand=water_levels"
   }
 ]
